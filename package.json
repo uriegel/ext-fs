@@ -1,0 +1,32 @@
+{
+    "name": "extension-fs",
+    "version": "0.0.1",
+    "description": "Extensions to nodejs's fs",
+    "main": "index.js",
+    "gypfile": true,
+    "scripts": {
+        "start": "node index.js",
+        "build:dev": "node-gyp build --debug",
+        "build": "node-gyp build",
+        "rebuild:dev": "node-gyp rebuild --debug",
+        "rebuild": "node-gyp rebuild",
+        "clean": "node-gyp clean"
+    },    
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/uriegel/ext-fs.git"
+    },
+    "keywords": [
+        "cpp",
+        "addon"
+    ],
+    "author": "Uwe Riegel",
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/uriegel/ext-fs/issues"
+    },
+    "homepage": "https://github.com/uriegel/ext-fs#readme",
+    "dependencies": {
+        "nan": "^2.13.2"
+    }
+}
