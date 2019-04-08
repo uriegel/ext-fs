@@ -2,35 +2,28 @@
 #include <nan.h>
 #include <string>
 #include <vector>
+#include "file_item.h"
 #if WINDOWS
-#include "windows/win.h"
+#include "windows/utils.h"
 #elif LINUX
 #endif
 
-struct File_item {
-	std::wstring display_name;
-	bool is_directory;
-	bool is_hidden;
-	uint64_t size;
-	uint64_t time;
-};
-
-class GetFilesWorker : public Nan::AsyncWorker {
+class Get_files_worker : public Nan::AsyncWorker {
 public:
-    GetFilesWorker(Nan::ReturnValue<v8::Value>& returnValue)
-    : AsyncWorker(nullptr) {
+    Get_files_worker(std::wstring directory, Nan::ReturnValue<v8::Value>& returnValue)
+    : AsyncWorker(nullptr), directory(directory) {
         auto resolver = v8::Promise::Resolver::New(Nan::GetCurrentContext()).ToLocalChecked();
         SaveToPersistent(1, resolver);
         returnValue.Set(resolver->GetPromise());
     }
-    ~GetFilesWorker() {}
+    ~Get_files_worker() {}
 
     // Executed inside the worker-thread.
     // It is not safe to access V8, or V8 data structures
     // here, so everything we need for input and output
     // should go on `this`.
     void Execute() {
-        GetFiles(L"", results);
+        get_files(directory, results);
     }
 
     // Executed when the async work is complete
@@ -39,4 +32,5 @@ public:
     void HandleOKCallback ();
 private:
     std::vector<File_item> results;
+    std::wstring directory;
 };

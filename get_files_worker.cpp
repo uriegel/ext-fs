@@ -1,8 +1,8 @@
-#include "GetFilesWorker.h"
+#include "Get_files_worker.h"
 using namespace std;
 using namespace Nan;
 
-void GetFilesWorker::HandleOKCallback () {
+void Get_files_worker::HandleOKCallback () {
     HandleScope scope;
 
     v8::Local<v8::Array> result_list = New<v8::Array>(results.size());

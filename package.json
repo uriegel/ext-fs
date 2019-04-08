@@ -2,16 +2,18 @@
     "name": "extension-fs",
     "version": "0.0.1",
     "description": "Extensions to nodejs's fs",
-    "main": "index.js",
+    "main": "./build/Release/extension-fs",
     "gypfile": true,
     "scripts": {
-        "start": "node index.js",
+        "start": "node dev/index.js",
+        "debug": "node --nolazy --inspect-brk=9229 dev/index.js",
         "build:dev": "node-gyp build --debug",
         "build": "node-gyp build",
         "rebuild:dev": "node-gyp rebuild --debug",
         "rebuild": "node-gyp rebuild",
         "clean": "node-gyp clean"
-    },    
+    },
+    "types": "extension-fs.d.ts",
     "repository": {
         "type": "git",
         "url": "git+https://github.com/uriegel/ext-fs.git"

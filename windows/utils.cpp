@@ -1,24 +1,31 @@
 #include <windows.h>
-#include "win.h"
+#include <algorithm>
+#include "utils.h"
 using namespace std;
 
-uint64_t convertWindowsTimeToUnixTime(const FILETIME& ft) {
+uint64_t convert_windowstime_to_unixtime(const FILETIME& ft) {
 	ULARGE_INTEGER ull;
 	ull.LowPart = ft.dwLowDateTime;
 	ull.HighPart = ft.dwHighDateTime;
 	return (ull.QuadPart / 10000000ULL - 11644473600ULL) * 1000;
 }
 
-void GetFiles(const std::wstring& directory, vector<File_item>& results) {
+void get_files(const std::wstring& directory, vector<File_item>& results) {
+    auto search_string = (directory[directory.length()-1] == L'\\' || directory[directory.length()-1] == L'/') 
+        ? directory + L"*.*"s
+        : directory + L"\\*.*"s;
+    replace(search_string.begin(), search_string.end(), L'/', L'\\'); 
+
+
     WIN32_FIND_DATAW w32fd{ 0 };
-    auto ret = FindFirstFileW(directory.c_str(), &w32fd);
+    auto ret = FindFirstFileW(search_string.c_str(), &w32fd);
     while (FindNextFileW(ret, &w32fd) == TRUE) {
         File_item item {
             w32fd.cFileName,
             (w32fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) == FILE_ATTRIBUTE_DIRECTORY,
             (w32fd.dwFileAttributes & FILE_ATTRIBUTE_HIDDEN) == FILE_ATTRIBUTE_HIDDEN,
             static_cast<uint64_t>(w32fd.nFileSizeHigh) << 32 | w32fd.nFileSizeLow,
-            convertWindowsTimeToUnixTime(w32fd.ftLastWriteTime)
+            convert_windowstime_to_unixtime(w32fd.ftLastWriteTime)
         };
         if (item.display_name != L".."s)
             results.push_back(item);

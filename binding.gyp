@@ -2,21 +2,26 @@
     "targets": [{
             "target_name": "extension-fs",
             "sources": [ 
-                "addon.cpp",
-                "GetFilesWorker.cpp",
-                './windows/win.cpp',
+                './addon.cpp',
+                './windows/utils.cpp',
+                "./Get_files_worker.cpp"
             ],
-            "cflags": ["-Wall", "-std=c++1z"],
+            "cflags": ["-Wall", "-std=c++14"],
             "include_dirs" : [
                 "<!(node -e \"require('nan')\")"
             ],
         "conditions": [
+            ['OS=="win"', {
+                'defines': ['WINDOWS']   
+                }
+            ],
             ['OS=="linux"', {
-                    'sources!': [
-                        './windows/win.cpp',  
-                    ]
-            }
+                'defines': ['LINUX'],
+                'sources!': [
+                    './windows/win.cpp'  
+                ]}
             ],
         ]          
     }]
 }
+
