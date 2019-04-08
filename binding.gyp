@@ -6,6 +6,7 @@
                 "./Get_files_worker.cpp",
                 "./Get_icon_worker.cpp",
                 './windows/utils.cpp',
+                './windows/get_icon.cpp',
             ],
             "cflags": ["-Wall", "-std=c++14"],
             "include_dirs" : [

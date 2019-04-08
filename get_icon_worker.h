@@ -3,7 +3,7 @@
 #include <string>
 #include <vector>
 #if WINDOWS
-#include "windows/utils.h"
+#include "windows/get_icon.h"
 #elif LINUX
 #endif
 
@@ -22,13 +22,14 @@ public:
     // here, so everything we need for input and output
     // should go on `this`.
     void Execute() {
-        get_icon(extension);
+        icon = move(get_icon(extension));
     }
 
     // Executed when the async work is complete
     // this function will be run inside the main event loop
     // so it is safe to use V8 again
-    void HandleOKCallback ();
+    void HandleOKCallback();
 private:
     std::wstring extension;
+    std::vector<char> icon;
 };
