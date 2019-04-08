@@ -23,7 +23,7 @@ public:
     // here, so everything we need for input and output
     // should go on `this`.
     void Execute() {
-        results = get_files(directory);
+        get_files(directory, results);
     }
 
     // Executed when the async work is complete

@@ -3,4 +3,4 @@
 #include <vector>
 
 #include "../file_item.h"
-std::vector<File_item> get_files(const std::wstring& directory);
+void get_files(const std::wstring& directory, std::vector<File_item>& results);
