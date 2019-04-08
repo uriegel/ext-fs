@@ -28,6 +28,6 @@ vector<File_item> get_files(const wstring& directory) {
             convert_windowstime_to_unixtime(w32fd.ftLastWriteTime)
         });
     }
-    return results;
+    return move(results);
 }
 
