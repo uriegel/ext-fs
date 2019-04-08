@@ -24,3 +24,4 @@ ThrowException(Exception::TypeError(String::New("This is an error, oh yes."))) r
 3. Stacktrace
 * Linux
 * In README describe steps to access methods like ```getFiles```. 
+* Test: fileItem constructor, first item wstring data pointer -> results in Worker: is it the same pointer?
