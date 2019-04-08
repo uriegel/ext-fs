@@ -1,4 +1,4 @@
-var addon = require('../build/release/extension-fs')
+var addon = require('../build/Debug/extension-fs')
 
 const run = async function() {
     let files = await addon.getFiles("c:/windows/system32")
