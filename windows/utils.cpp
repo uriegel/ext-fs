@@ -1,7 +1,9 @@
 #include <windows.h>
+#include <Gdiplus.h>
 #include <algorithm>
 #include "utils.h"
 using namespace std;
+using namespace Gdiplus;
 
 uint64_t convert_windowstime_to_unixtime(const FILETIME& ft) {
 	ULARGE_INTEGER ull;
@@ -27,16 +29,46 @@ vector<File_item> get_files(const wstring& directory) {
             static_cast<uint64_t>(w32fd.nFileSizeHigh) << 32 | w32fd.nFileSizeLow,
             convert_windowstime_to_unixtime(w32fd.ftLastWriteTime)
         });
-
-        // results.push_back(File_item {
-        //     L"",
-        //     (w32fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) == FILE_ATTRIBUTE_DIRECTORY,
-        //     (w32fd.dwFileAttributes & FILE_ATTRIBUTE_HIDDEN) == FILE_ATTRIBUTE_HIDDEN,
-        //     static_cast<uint64_t>(w32fd.nFileSizeHigh) << 32 | w32fd.nFileSizeLow,
-        //     convert_windowstime_to_unixtime(w32fd.ftLastWriteTime)
-        // });
-        // results[pos++].display_name = w32fd.cFileName;
     }
     return results;
 }
 
+ULONG_PTR gdiplus_token{0};
+CLSID png_clsid{0};
+CLSID get_encoder_clsid(const wstring& format);
+
+void gdiplus_initialize()
+{
+	GdiplusStartupInput gdiplus_startup_input;
+	gdiplus_token;
+	auto status = GdiplusStartup(&gdiplus_token, &gdiplus_startup_input, nullptr);
+
+	if (png_clsid.Data1 == 0)
+		png_clsid = get_encoder_clsid(L"image/png"s);
+}
+
+void gdiplus_uninitialize() {
+	GdiplusShutdown(gdiplus_token);
+}
+
+void get_icon(const std::wstring& extension) {
+    gdiplus_initialize();
+    gdiplus_uninitialize();
+}
+
+CLSID get_encoder_clsid(const wstring& format)
+{
+	UINT num{ 0 };
+	UINT  size{ 0 };
+	GetImageEncodersSize(&num, &size);
+	if (size == 0)
+		return { 0 };
+
+	vector<char> image_codec_info_buffer(size);
+	auto image_codec_info = reinterpret_cast<ImageCodecInfo*>(image_codec_info_buffer.data());
+	GetImageEncoders(num, size, image_codec_info);
+	for (auto i = 0u; i < num; ++i)
+		if (format == image_codec_info[i].MimeType)
+			return image_codec_info[i].Clsid;
+	return { 0 };
+}
