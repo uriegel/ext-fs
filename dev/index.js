@@ -9,6 +9,10 @@ const run = async function() {
     const diff = process.hrtime(hrstart)
     console.info(`Execution time files (hr): ${(diff[1] / 1000000.0)}`)
 
+    const hrstart1 = process.hrtime()
+    let icon = await addon.getIcon(".exe")
+    const diff1 = process.hrtime(hrstart1)
+    console.info(`Execution time files (hr): ${(diff1[1] / 1000000.0)}`)
 
     console.log("Finished")
 }

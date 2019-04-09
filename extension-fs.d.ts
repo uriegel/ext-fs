@@ -8,4 +8,5 @@ interface FileItem {
 
 declare module 'extension-fs' {
     function getFiles(path: string): Promise<FileItem[]>
+    function getIcon(ext: string): Promise<FileItem[]>
 }
