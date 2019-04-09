@@ -15,14 +15,15 @@ public:
         SaveToPersistent(1, resolver);
         returnValue.Set(resolver->GetPromise());
     }
-    ~Get_icon_worker() {}
+    ~Get_icon_worker() { delete icon;}
 
     // Executed inside the worker-thread.
     // It is not safe to access V8, or V8 data structures
     // here, so everything we need for input and output
     // should go on `this`.
     void Execute() {
-        icon = move(get_icon(extension));
+        icon = new std::vector<char>();
+        get_icon(extension, icon);
     }
 
     // Executed when the async work is complete
@@ -31,5 +32,5 @@ public:
     void HandleOKCallback();
 private:
     std::wstring extension;
-    std::vector<char> icon;
+    std::vector<char>* icon{nullptr};
 };
