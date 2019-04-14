@@ -2,6 +2,26 @@
 #include <Gdiplus.h>
 #include <string>
 #include <vector>
+
+
+
+
+
+
+
+
+
+#include <iostream>
+
+
+
+
+
+
+
+
+
+
 #include <memory>
 #include "Objidl.h"
 using namespace std;
@@ -54,10 +74,28 @@ private:
 };
 
 void extract_icon(const wstring& icon_path, vector<char>* iconBytes) {
-	SHFILEINFOW file_info{ 0 };
-	SHGetFileInfoW(icon_path.c_str(), FILE_ATTRIBUTE_NORMAL, &file_info, sizeof(file_info),
-		SHGFI_ICON | SHGFI_SMALLICON | SHGFI_USEFILEATTRIBUTES | SHGFI_TYPENAME);
-	auto icon = file_info.hIcon;
+	
+    HICON icon{nullptr};
+    for (auto i = 0; i < 3; i++) {
+        SHFILEINFOW file_info{ 0 };
+        SHGetFileInfoW(icon_path.c_str(), FILE_ATTRIBUTE_NORMAL, &file_info, sizeof(file_info),
+            SHGFI_ICON | SHGFI_SMALLICON | SHGFI_USEFILEATTRIBUTES | SHGFI_TYPENAME);
+        
+        icon = file_info.hIcon;
+        if (icon) {
+            if (i > 0)
+                wcout << "i > 1: " << i << endl;  
+            break;
+        }
+        else
+            Sleep(30);
+    }
+    if (!icon) {            
+        wcout << "Extracting default" << endl;  
+        HICON iconLarge;
+        ExtractIconExW(L"C:\\Windows\\system32\\SHELL32.dll", 0, &iconLarge, &icon, 1);
+        DestroyIcon(iconLarge);
+    }
 
 	ICONINFO icon_info{ 0 };
 	GetIconInfo(icon, &icon_info);
@@ -113,6 +151,8 @@ void extract_icon(const wstring& icon_path, vector<char>* iconBytes) {
 }
 
 void get_icon(const wstring& extension, vector<char>* iconBytes) {
+    wcout << extension << endl;  
+    
     gdiplus_initialize();
 
     extract_icon(extension, iconBytes); 
