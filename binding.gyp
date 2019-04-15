@@ -3,8 +3,10 @@
             "target_name": "extension-fs",
             "sources": [ 
                 './addon.cpp',
-                "./Get_files_worker.cpp",
-                "./Get_icon_worker.cpp",
+                "./get_drives_worker.cpp",
+                "./get_files_worker.cpp",
+                "./get_icon_worker.cpp",
+                './std_utils.cpp',
                 './windows/utils.cpp',
                 './windows/get_icon.cpp',
             ],
