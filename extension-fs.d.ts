@@ -15,7 +15,7 @@ interface DriveItem {
 }
 
 interface FileItem {
-    displayName: string
+    name: string
     size: number
     time: Date
     isDirectory: boolean
