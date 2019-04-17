@@ -2,12 +2,19 @@
 var addon = require('../build/Release/extension-fs')
 
 const run = async function() {
-
     let hrstart = process.hrtime()
-    let drives = await addon.getDrives() 
+    for (let i = 0; i < 1000; i++) {
+        let exifDatum = await addon.getExifDate("A:\\Bilder\\2015\\Canon\\IMG_8420.JPG")
+    }
     let diff = process.hrtime(hrstart)
     console.info(`Execution time drives (hr): ${(diff[1] / 1000000.0)}`)
+
+    hrstart = process.hrtime()
+    drives = await addon.getDrives() 
+    diff = process.hrtime(hrstart)
+    console.info(`Execution time drives (hr): ${(diff[1] / 1000000.0)}`)
     console.log(drives)
+
 
 
     hrstart = process.hrtime()

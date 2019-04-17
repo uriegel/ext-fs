@@ -162,3 +162,6 @@ private:
 	bool is_little_endian{ false };
 };
 
+uint64_t get_exif_date(const std::wstring& file);
+
+

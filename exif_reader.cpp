@@ -1,5 +1,27 @@
 #include "exif_reader.h"
+#include <sstream>
+#include <iomanip>
+#include <chrono>
 using namespace std;
+
+uint64_t get_exif_date(const wstring& file) {
+    Exif_reader er(file);
+	auto res = er.initialize();
+    if (!res)
+        return 0;
+	bool success;
+	string result;
+	tie(success, result) = er.get_tag_string(Exif_tag::DateTime);
+
+	tm tm = {};
+	stringstream ss(result.c_str());
+	ss >> get_time(&tm, "%Y:%m:%d %H:%M:%S");
+	auto time = mktime(&tm);
+
+	auto secs = static_cast<chrono::seconds>(time).count();
+	auto unix_time = static_cast<uint64_t>(secs)  * 1000;
+    return unix_time;
+}
 
 char get_tiff_field_length(uint16_t tiff_data_type);
 
