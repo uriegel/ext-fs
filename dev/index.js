@@ -1,4 +1,4 @@
-//var addon = require('../build/Debug/extension-fs')
+// var addon = require('../build/Debug/extension-fs')
 var addon = require('../build/Release/extension-fs')
 
 const run = async function() {
@@ -20,12 +20,25 @@ const run = async function() {
     diff = process.hrtime(hrstart)
     console.info(`Execution time files (hr): ${(diff[1] / 1000000.0)}`)
 
-    const hrstart1 = process.hrtime()
+    hrstart = process.hrtime()
     let icon = await addon.getIcon(".exe")
-    const diff1 = process.hrtime(hrstart1)
-    console.info(`Execution time files (hr): ${(diff1[1] / 1000000.0)}`)
+    diff = process.hrtime(hrstart)
+    console.info(`Execution time files (hr): ${(diff[1] / 1000000.0)}`)
 
     console.log("Finished")
+
+    hrstart = process.hrtime()
+    files.forEach(async n => {
+        const version = await addon.getFileVersion("c:\\windows\\system32\\" + n.name)
+    })
+    diff = process.hrtime(hrstart)
+    console.info(`Execution time version iteration: ${(diff[1] / 1000000.0)}`)
+
+    hrstart = process.hrtime()
+    const version = await addon.getFileVersion(`C:\\Program Files\\internet explorer\\iexplore.exe`)
+    diff = process.hrtime(hrstart)
+    console.info(`Execution time version: ${(diff[1] / 1000000.0)}`)
 }
 run()
+
 

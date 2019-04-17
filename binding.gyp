@@ -6,6 +6,7 @@
                 "./get_drives_worker.cpp",
                 "./get_files_worker.cpp",
                 "./get_icon_worker.cpp",
+                "./get_file_version_worker.cpp",
                 './std_utils.cpp',
                 './windows/utils.cpp',
                 './windows/get_icon.cpp',
@@ -16,7 +17,8 @@
             ],
         'link_settings': {
             "libraries": [ 
-                "gdiplus.lib"
+                "gdiplus.lib",
+                "Mincore.lib"
             ]
         },            
         "conditions": [
@@ -30,7 +32,8 @@
                     './windows/utils.cpp'  
                 ],
                 'libraries!': [ 
-                        "gdiplus.lib"
+                        "gdiplus.lib",
+                        "Mincore.lib"
                 ]}
             ],
         ]          

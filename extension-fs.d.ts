@@ -22,8 +22,16 @@ interface FileItem {
     isHidden: boolean
 }
 
+interface VersionInfo {
+    major: number
+    minor: number
+    build: number
+    patch: number
+}
+
 declare module 'extension-fs' {
     function getDrives(): Promise<DriveItem[]>
     function getFiles(path: string): Promise<FileItem[]>
     function getIcon(ext: string): Promise<Buffer>
+    function getFileVersion(file: string): Promise<VersionInfo>
 }
