@@ -184,15 +184,15 @@ string Exif_reader::read_string(uint16_t tiff_offset, int length) {
 
 
 uint32_t Exif_reader::to_int(string data) {
-	if (is_little_endian)
-		data.reserve(4);
+	if (!is_little_endian)
+		reverse(data.begin(), data.end());
 
 	return static_cast<uint32_t>(*(reinterpret_cast<const uint32_t*>(data.c_str())));
 }
 
 uint16_t Exif_reader::to_ushort(std::string data) {
-	if (is_little_endian)
-		data.reserve(2);
+	if (!is_little_endian)
+		reverse(data.begin(), data.end());
 
 	return static_cast<uint16_t>(*(reinterpret_cast<const uint16_t*>(data.c_str())));
 }
