@@ -1,6 +1,8 @@
 // var addon = require('../build/Debug/extension-fs')
 var addon = require('../build/Release/extension-fs')
 
+const watt = addon.hello()
+
 const run = async function() {
     let hrstart = process.hrtime()
     for (let i = 0; i < 1000; i++) {
