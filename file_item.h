@@ -2,7 +2,7 @@
 #include <string>
 
 struct File_item {
-	const std::wstring display_name;
+	const std::u16string display_name;
 	const bool is_directory;
 	const bool is_hidden;
 	const uint64_t size;

@@ -1,4 +1,3 @@
-#include <windows.h>
 #include <algorithm>
 #include <array>
 #include "utils.h"
@@ -81,17 +80,17 @@ void get_drives(vector<Drive_item>& drive_items) {
 	// drive_items.erase(erase_it, drive_items.end());
 }
 
-void get_files(const wstring& directory, vector<File_item>& file_items) {
+void get_files(const u16string& directory, vector<File_item>& file_items) {
     auto search_string = (directory[directory.length()-1] == L'\\' || directory[directory.length()-1] == L'/') 
-        ? directory + L"*.*"s
-        : directory + L"\\*.*"s;
+        ? directory + u"*.*"s
+        : directory + u"\\*.*"s;
     replace(search_string.begin(), search_string.end(), L'/', L'\\'); 
 
     WIN32_FIND_DATAW w32fd{ 0 };
-    auto ret = FindFirstFileW(search_string.c_str(), &w32fd);
+    auto ret = FindFirstFileW(reinterpret_cast<const wchar_t*>(search_string.c_str()), &w32fd);
     while (FindNextFileW(ret, &w32fd) == TRUE) {
         file_items.emplace_back(File_item {
-            w32fd.cFileName,
+            reinterpret_cast<const char16_t*>(w32fd.cFileName),
             (w32fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) == FILE_ATTRIBUTE_DIRECTORY,
             (w32fd.dwFileAttributes & FILE_ATTRIBUTE_HIDDEN) == FILE_ATTRIBUTE_HIDDEN,
             static_cast<uint64_t>(w32fd.nFileSizeHigh) << 32 | w32fd.nFileSizeLow,

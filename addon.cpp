@@ -1,10 +1,35 @@
 #include <napi.h>
+#include <string>
+#include "windows/utils.h"
 // #include "get_drives_worker.h"
 // #include "get_files_worker.h"
 // #include "get_icon_worker.h"
 // #include "get_file_version_worker.h"
 // #include "get_exif_date_worker.h"
 using namespace Napi;
+using namespace std;
+
+
+
+
+#include <v8.h>
+
+// This asserts v8::Local<> will always be implemented with a single
+// pointer field so that we can pass it around as a void*.
+static_assert(sizeof(v8::Local<v8::Value>) == sizeof(napi_value),
+  "Cannot convert between v8::Local<v8::Value> and napi_value");
+
+napi_status napi_create_date_by_v8(
+    double time,
+    napi_value* result
+) {
+  v8::Isolate* isolate = v8::Isolate::GetCurrent();
+
+  v8::MaybeLocal<v8::Value> maybe_date = v8::Date::New(isolate, time);
+  v8::Local<v8::Value> local = maybe_date.ToLocalChecked();
+  *result = reinterpret_cast<napi_value>(*local);
+  return napi_ok;
+}
 
 // NAN_METHOD(get_drives) {
 //     AsyncQueueWorker(new Get_drives_worker(info.GetReturnValue()));
@@ -42,21 +67,32 @@ using namespace Napi;
 //     Set(target, New<v8::String>("getExifDate").ToLocalChecked(), GetFunction(New<v8::FunctionTemplate>(get_exif_date)).ToLocalChecked());
 // }
 
-
-#include <string>
-std::string hello(){
-    return "Hello World";
-}
-
-String HelloWrapped(const CallbackInfo& info) 
-{
+Array GetFiles(const CallbackInfo& info) {
     Env env = info.Env();
-    String returnValue = String::New(env, hello());
-    return returnValue;
+
+    auto path = static_cast<u16string>(info[0].As<String>());
+    vector<File_item> results;
+    get_files(path, results);
+
+    int index{0};
+    auto result = Array::New(env);
+    for(auto item: results) {
+        auto obj = Object::New(env);
+        obj.Set(String::New(env, u"name"), String::New(env, item.display_name.c_str()));
+        obj.Set(String::New(env, u"size"), Number::New(env, item.size));
+        napi_value date;
+        napi_create_date_by_v8(item.time, &date);
+        obj.Set(String::New(env, u"time"), date);
+        obj.Set(String::New(env, u"isDirectory"), Boolean::New(env, item.is_directory));
+        obj.Set(String::New(env, u"isHidden"), Boolean::New(env, item.is_hidden));
+        result.Set(index++, obj);
+    }
+
+    return result;
 }
 
 Object InitAll(Env env, Object exports) {
-    exports.Set("hello", Function::New(env, HelloWrapped));
+    exports.Set("getFiles", Function::New(env, GetFiles));
     return exports;
 }
 

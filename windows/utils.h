@@ -1,4 +1,5 @@
 #pragma once
+#include <windows.h>
 #include <string>
 #include <vector>
 
@@ -20,5 +21,5 @@ private:
 };
 
 void get_drives(std::vector<Drive_item>& drive_items);
-void get_files(const std::wstring& directory, std::vector<File_item>& file_items);
+void get_files(const std::u16string& directory, std::vector<File_item>& file_items);
 Version_info get_file_info_version(const std::wstring& file_name);

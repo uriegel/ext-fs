@@ -1,7 +1,8 @@
 // var addon = require('../build/Debug/extension-fs')
 var addon = require('../build/Release/extension-fs')
 
-const watt = addon.hello()
+const watt = addon.getFiles("c:\\windows\\system32")
+consle.log (watt)
 
 const run = async function() {
     let hrstart = process.hrtime()
