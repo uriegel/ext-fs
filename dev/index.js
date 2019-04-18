@@ -9,6 +9,10 @@ const run = async function() {
     let diff = process.hrtime(hrstart)
     console.info(`Execution time drives (hr): ${(diff[1] / 1000000.0)}`)
 
+    let exifDatum = await addon.getExifDate("A:\\Bilder\\2015\\Canon\\IMG_8420gg.JPG")
+    if (exifDatum)
+        console.log(exifDatum)
+
     hrstart = process.hrtime()
     drives = await addon.getDrives() 
     diff = process.hrtime(hrstart)
