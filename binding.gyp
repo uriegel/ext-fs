@@ -7,6 +7,7 @@
                 "./get_files_worker.cpp",
                 "./get_icon_worker.cpp",
                 "./get_file_version_worker.cpp",
+                "./get_file_version_async_worker.cpp",
                 "./get_exif_date_worker.cpp",
                 './std_utils.cpp',
                 './exif_reader.cpp',
@@ -15,7 +16,8 @@
             ],
             "cflags": ["-Wall", "-std=c++14"],
             "include_dirs" : [
-                "<!(node -e \"require('nan')\")"
+                "<!(node -e \"require('nan')\")",
+                "<!(node -e \"require('nan-async')\")"
             ],
         'link_settings': {
             "libraries": [ 
