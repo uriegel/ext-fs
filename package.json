@@ -29,7 +29,6 @@
     },
     "homepage": "https://github.com/uriegel/ext-fs#readme",
     "dependencies": {
-        "nan": "^2.13.2",
-        "nan-async": "0.0.1"
+        "nan": "^2.13.2"
     }
 }

@@ -22,3 +22,4 @@ private:
 void get_drives(std::vector<Drive_item>& drive_items);
 void get_files(const std::wstring& directory, std::vector<File_item>& file_items);
 Version_info get_file_info_version(const std::wstring& file_name);
+void combine_path(std::wstring& path, const std::wstring& path_to_combine);
