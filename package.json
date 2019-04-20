@@ -2,7 +2,7 @@
     "name": "extension-fs",
     "version": "0.9.1",
     "description": "Extensions to nodejs's fs",
-    "main": "./build/Release/extension-fs",
+    "main": "./extension-fs.js",
     "gypfile": true,
     "scripts": {
         "start": "node dev/index.js",
