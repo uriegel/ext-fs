@@ -9,12 +9,9 @@
 
 class Get_icon_worker : public Nan::AsyncWorker {
 public:
-    Get_icon_worker(std::wstring extension, Nan::ReturnValue<v8::Value>& returnValue)
-    : AsyncWorker(nullptr), extension(extension) {
-        auto resolver = v8::Promise::Resolver::New(Nan::GetCurrentContext()).ToLocalChecked();
-        SaveToPersistent(1, resolver);
-        returnValue.Set(resolver->GetPromise());
-    }
+    Get_icon_worker(std::wstring extension, Nan::Callback *callback)
+    : AsyncWorker(callback)
+    , extension(extension) {}
     ~Get_icon_worker() { delete icon;}
 
     // Executed inside the worker-thread.

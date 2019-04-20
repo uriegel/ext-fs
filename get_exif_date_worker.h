@@ -6,13 +6,9 @@
 
 class Get_exif_date_worker : public Nan::AsyncWorker {
 public:
-    Get_exif_date_worker(const std::wstring& file, Nan::ReturnValue<v8::Value>& returnValue)
-    : AsyncWorker(nullptr)
-    , file(file) {
-        auto resolver = v8::Promise::Resolver::New(Nan::GetCurrentContext()).ToLocalChecked();
-        SaveToPersistent(1, resolver);
-        returnValue.Set(resolver->GetPromise());
-    }
+    Get_exif_date_worker(const std::wstring& file, Nan::Callback *callback)
+    : AsyncWorker(callback)
+    , file(file) {}
     ~Get_exif_date_worker() {}
 
     // Executed inside the worker-thread.
@@ -26,7 +22,7 @@ public:
     // Executed when the async work is complete
     // this function will be run inside the main event loop
     // so it is safe to use V8 again
-    void HandleOKCallback ();
+    void HandleOKCallback();
 private:
     std::wstring file;
     uint64_t exif_date;

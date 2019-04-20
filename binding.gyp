@@ -8,7 +8,6 @@
                 "./get_icon_worker.cpp",
                 "./get_file_version_worker.cpp",
                 "./get_exif_date_worker.cpp",
-                "./add_extended_infos_worker.cpp",
                 './std_utils.cpp',
                 './exif_reader.cpp',
                 './windows/utils.cpp',

@@ -5,12 +5,14 @@ using namespace std;
 void Get_exif_date_worker::HandleOKCallback() {
     HandleScope scope;
 
-    auto resolver = GetFromPersistent(1).As<v8::Promise::Resolver>();
-
     if (exif_date) {
         auto date = New<v8::Date>(static_cast<double>(exif_date)).ToLocalChecked();
-        resolver->Resolve(GetCurrentContext(), date);
+        v8::Local<v8::Value> argv[] = { Null(), date };
+        callback->Call(2, argv, async_resource);
     }
-    else
-        resolver->Resolve(GetCurrentContext(), Undefined());
+    else {
+        v8::Local<v8::Value> argv[] = { Null(), Null() };
+        callback->Call(2, argv, async_resource);
+    }
 }
+

@@ -10,12 +10,8 @@
 
 class Get_drives_worker : public Nan::AsyncWorker {
 public:
-    Get_drives_worker(Nan::ReturnValue<v8::Value>& returnValue)
-    : AsyncWorker(nullptr) {
-        auto resolver = v8::Promise::Resolver::New(Nan::GetCurrentContext()).ToLocalChecked();
-        SaveToPersistent(1, resolver);
-        returnValue.Set(resolver->GetPromise());
-    }
+    Get_drives_worker(Nan::Callback *callback)
+    : AsyncWorker(callback) { }
     ~Get_drives_worker() {}
 
     // Executed inside the worker-thread.

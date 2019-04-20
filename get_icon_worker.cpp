@@ -11,6 +11,6 @@ void Get_icon_worker::HandleOKCallback() {
     icon = nullptr;
     auto buffer = Nan::NewBuffer(iconPtr->data(), iconPtr->size(), buffer_delete_callback, iconPtr).ToLocalChecked();
     
-    auto resolver = GetFromPersistent(1).As<v8::Promise::Resolver>();
-    resolver->Resolve(GetCurrentContext(), buffer);
+    v8::Local<v8::Value> argv[] = { Null(), buffer};
+    callback->Call(2, argv, async_resource);
 }

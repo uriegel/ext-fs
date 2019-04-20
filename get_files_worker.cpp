@@ -19,6 +19,6 @@ void Get_files_worker::HandleOKCallback () {
         result_list->Set(i++, result);
     }        
 
-    auto resolver = GetFromPersistent(1).As<v8::Promise::Resolver>();
-    resolver->Resolve(GetCurrentContext(), result_list);
+    v8::Local<v8::Value> argv[] = { Null(), result_list};
+    callback->Call(2, argv, async_resource);
 }

@@ -11,6 +11,6 @@ void Get_file_version_worker::HandleOKCallback() {
     result->Set(New<v8::String>("build").ToLocalChecked(), New<v8::Number>(static_cast<double>(version.build)));
     result->Set(New<v8::String>("patch").ToLocalChecked(), New<v8::Number>(static_cast<double>(version.patch)));
 
-    auto resolver = GetFromPersistent(1).As<v8::Promise::Resolver>();
-    resolver->Resolve(GetCurrentContext(), result);
+    v8::Local<v8::Value> argv[] = { Null(), result};
+    callback->Call(2, argv, async_resource);
 }
