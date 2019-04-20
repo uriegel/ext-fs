@@ -42,6 +42,25 @@ NAN_METHOD(add_extended_infos) {
     AsyncQueueWorker(new Add_extended_infos_worker(reinterpret_cast<wchar_t*>(*s), fileInfos, info.GetReturnValue()));
 }
 
+NAN_METHOD(work1) {
+    auto isolate = info.GetIsolate();
+    v8::String::Value s(isolate, info[0]);
+    AsyncQueueWorker(new Work_worker1(reinterpret_cast<wchar_t*>(*s), info.GetReturnValue()));
+}
+
+NAN_METHOD(work) {
+    auto isolate = info.GetIsolate();
+    v8::String::Value s(isolate, info[0]);
+    auto callback = new Callback(info[1].As<v8::Function>());
+    AsyncQueueWorker(new Work_worker(reinterpret_cast<wchar_t*>(*s), callback));
+}
+
+NAN_METHOD(log) {
+    auto isolate = info.GetIsolate();
+    v8::String::Value s(isolate, info[0]);
+    printf("Log: %ls\n", *s);
+}
+
 NAN_MODULE_INIT(init) {
     Set(target, New<v8::String>("getDrives").ToLocalChecked(), GetFunction(New<v8::FunctionTemplate>(get_drives)).ToLocalChecked());
     Set(target, New<v8::String>("getFiles").ToLocalChecked(), GetFunction(New<v8::FunctionTemplate>(get_files)).ToLocalChecked());
@@ -49,6 +68,10 @@ NAN_MODULE_INIT(init) {
     Set(target, New<v8::String>("getFileVersion").ToLocalChecked(), GetFunction(New<v8::FunctionTemplate>(get_file_version)).ToLocalChecked());
     Set(target, New<v8::String>("getExifDate").ToLocalChecked(), GetFunction(New<v8::FunctionTemplate>(get_exif_date)).ToLocalChecked());
     Set(target, New<v8::String>("addExtendedInfos").ToLocalChecked(), GetFunction(New<v8::FunctionTemplate>(add_extended_infos)).ToLocalChecked());
+
+    Set(target, New<v8::String>("work1").ToLocalChecked(), GetFunction(New<v8::FunctionTemplate>(work1)).ToLocalChecked());
+    Set(target, New<v8::String>("work").ToLocalChecked(), GetFunction(New<v8::FunctionTemplate>(work)).ToLocalChecked());
+    Set(target, New<v8::String>("log").ToLocalChecked(), GetFunction(New<v8::FunctionTemplate>(log)).ToLocalChecked());
 }
 
 NODE_MODULE(extension_fs, init)
