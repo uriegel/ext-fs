@@ -2,7 +2,7 @@
 #include <napi.h>
 // #include "get_drives_worker.h"
 #include "get_files_worker.h"
-// #include "get_icon_worker.h"
+#include "get_icon_worker.h"
 // #include "get_file_version_worker.h"
 // #include "get_exif_date_worker.h"
 using namespace Napi;
@@ -10,13 +10,6 @@ using namespace Napi;
 // NAN_METHOD(get_drives) {
 //     auto callback = new Callback(To<v8::Function>(info[0]).ToLocalChecked());
 //     AsyncQueueWorker(new Get_drives_worker(callback));
-// }
-
-// NAN_METHOD(get_icon) {
-//     auto isolate = info.GetIsolate();
-//     v8::String::Value s(isolate, info[0]);
-//     auto callback = new Callback(To<v8::Function>(info[1]).ToLocalChecked());
-//     AsyncQueueWorker(new Get_icon_worker(reinterpret_cast<wchar_t*>(*s), callback));
 // }
 
 // NAN_METHOD(get_file_version) {
@@ -35,7 +28,7 @@ using namespace Napi;
 
 Object Init(Env env, Object exports) {
     exports.Set(String::New(env, "getFiles"), Function::New(env, GetFiles));
-//    exports.Set(String::New(env, "getIcon"), Function::New(env, GetIcon));
+    exports.Set(String::New(env, "getIcon"), Function::New(env, GetIcon));
     return exports;
 }
 

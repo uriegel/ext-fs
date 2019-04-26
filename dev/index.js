@@ -1,31 +1,5 @@
 const addon = require('bindings')('extension-fs')
 
-let i = 1
-
-const renn = async  () => {
-    let files = await addon.getFiles("d:/Test😎😎😎")
-    console.log(i++)
-}
-
-renn()
-renn()
-renn()
-renn()
-renn()
-renn()
-renn()
-renn()
-renn()
-renn()
-renn()
-renn()
-renn()
-renn()
-renn()
-renn()
-
-
-
 const run = async () => {
     let hrstart = process.hrtime()
     // for (let i = 0; i < 1000; i++) {
@@ -56,10 +30,10 @@ const run = async () => {
     diff = process.hrtime(hrstart)
     console.info(`Execution time files c:/windows/system32: ${(diff[1] / 1000000.0)}`)
 
-    // hrstart = process.hrtime()
-    // let icon = await addon.getIcon(".exe")
-    // diff = process.hrtime(hrstart)
-    // console.info(`Execution time geticon .exe (hr): ${(diff[1] / 1000000.0)}`)
+    hrstart = process.hrtime()
+    let icon = await addon.getIcon(".exe")
+    diff = process.hrtime(hrstart)
+    console.info(`Execution time geticon .exe (hr): ${(diff[1] / 1000000.0)}`)
 
     console.log("Finished")
 
@@ -87,6 +61,30 @@ const run = async () => {
 
 }
 run()
+
+let i = 1
+
+const renn = async  () => {
+    let files = await addon.getFiles("d:/Test😎😎😎")
+    console.log(i++)
+}
+
+// renn()
+// renn()
+// renn()
+// renn()
+// renn()
+// renn()
+// renn()
+// renn()
+// renn()
+// renn()
+// renn()
+// renn()
+// renn()
+// renn()
+// renn()
+// renn()
 
 
 

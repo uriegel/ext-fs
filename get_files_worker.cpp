@@ -2,6 +2,7 @@
 #include <napi.h>
 #include <vector>
 #include "wstring.h"
+#include "nullfunction.h"
 #include "get_files_worker.h"
 #include "file_item.h"
 #if WINDOWS
@@ -11,8 +12,6 @@
 using namespace Napi;
 using namespace std;
 
-String NullFunction(const Napi::CallbackInfo& info) { return String::New(info.Env(), ""); }
-
 class Get_files_worker : public AsyncWorker {
 public:
     Get_files_worker(const Napi::Env& env, const wstring& directory)
@@ -21,9 +20,7 @@ public:
     , deferred(Promise::Deferred::New(Env())) {}
     ~Get_files_worker() {}
 
-    void Execute () {
-        get_files(directory, files);
-    }
+    void Execute () { get_files(directory, files); }
 
     void OnOK();
 

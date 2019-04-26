@@ -4,8 +4,11 @@
         "sources": [ 
             'addon.cpp',
             'get_files_worker.cpp',
+            'get_icon_worker.cpp',
             'std_utils.cpp',
+            'nullfunction.cpp',
             'windows/utils.cpp',
+            'windows/get_icon.cpp',
         ],
         'include_dirs': ["<!@(node -p \"require('node-addon-api').include\")"],
         'dependencies': ["<!(node -p \"require('node-addon-api').gyp\")"],
