@@ -4,6 +4,7 @@
         "sources": [ 
             'addon.cpp',
             'get_files_worker.cpp',
+            'get_drives_worker.cpp',
             'get_icon_worker.cpp',
             'std_utils.cpp',
             'nullfunction.cpp',

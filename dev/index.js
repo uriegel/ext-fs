@@ -13,12 +13,10 @@ const run = async () => {
     //     console.log(exifDatum)
 
     hrstart = process.hrtime()
-//    drives = await addon.getDrives() 
+    drives = await addon.getDrives() 
     diff = process.hrtime(hrstart)
     console.info(`Execution time drives (hr): ${(diff[1] / 1000000.0)}`)
-//    console.log(drives)
-
-
+    console.log(drives)
 
     hrstart = process.hrtime()
     let files = await addon.getFiles("d:/Test😎😎😎")
