@@ -35,28 +35,27 @@ const run = async () => {
 
     console.log("Finished")
 
-    // hrstart = process.hrtime()
-    // let version = await addon.getFileVersion(`C:\\Program Files\\internet explorer\\iexplore.exe`)
-    // diff = process.hrtime(hrstart)
-    // console.info(`Execution getFileVersion: ${(diff[1] / 1000000.0)}`)
+    hrstart = process.hrtime()
+    let version = await addon.getFileVersion(`C:\\Program Files\\internet explorer\\iexplore.exe`)
+    diff = process.hrtime(hrstart)
+    console.info(`Execution getFileVersion: ${(diff[1] / 1000000.0)}`)
 
     hrstart = process.hrtime()
     files = await addon.getFiles("c:/windows/system32")
     diff = process.hrtime(hrstart)
     console.info(`Execution time files c:/windows/system32 (hr): ${(diff[1] / 1000000.0)}`)
 
-    // hrstart = process.hrtime()
-    // version = await addon.getFileVersion(`C:\\Program Files\\internet explorer\\iexplore.exe`)
-    // diff = process.hrtime(hrstart)
-    // console.info(`Execution getFileVersion: ${(diff[1] / 1000000.0)}`)
+    hrstart = process.hrtime()
+    version = await addon.getFileVersion(`C:\\Program Files\\internet explorer\\iexplore.exe`)
+    diff = process.hrtime(hrstart)
+    console.info(`Execution getFileVersion: ${(diff[1] / 1000000.0)}`)
 
-    // hrstart = process.hrtime()
-    // files.forEach(async n => {
-    //     const version = await addon.getFileVersion("c:\\windows\\system32\\" + n.name)
-    // })
-    // diff = process.hrtime(hrstart)
-    // console.info(`Execution time version iteration: ${(diff[1] / 1000000.0)}`)
-
+    hrstart = process.hrtime()
+    files.forEach(async n => {
+        const version = await addon.getFileVersion("c:\\windows\\system32\\" + n.name)
+    })
+    diff = process.hrtime(hrstart)
+    console.info(`Execution time version iteration: ${(diff[1] / 1000000.0)}`)
 }
 run()
 
