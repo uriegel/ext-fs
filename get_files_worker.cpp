@@ -1,24 +1,66 @@
-#include "Get_files_worker.h"
+#define NAPI_EXPERIMENTAL
+#include <napi.h>
+#include <vector>
+#include "wstring.h"
+#include "get_files_worker.h"
+#include "file_item.h"
+#if WINDOWS
+#include "windows/utils.h"
+#elif LINUX
+#endif
+using namespace Napi;
 using namespace std;
-using namespace Nan;
 
-void Get_files_worker::HandleOKCallback () {
-    HandleScope scope;
+String NullFunction(const Napi::CallbackInfo& info) { return String::New(info.Env(), ""); }
 
-    v8::Local<v8::Array> result_list = New<v8::Array>(results.size());
+class Get_files_worker : public AsyncWorker {
+public:
+    Get_files_worker(const Napi::Env& env, const wstring& directory)
+    : AsyncWorker(Function::New(env, NullFunction, "theFunction"))
+    , directory(directory)
+    , deferred(Promise::Deferred::New(Env())) {}
+    ~Get_files_worker() {}
+
+    void Execute () {
+        get_files(directory, files);
+    }
+
+    void OnOK();
+
+    Promise Promise() { return deferred.Promise(); }
+
+private:
+    Promise::Deferred deferred;
+    wstring directory;
+    vector<File_item> files;
+};
+
+void Get_files_worker::OnOK() {
+    HandleScope scope(Env());
+
+    auto array = Array::New(Env(), files.size());
     int i{0};
-    for(auto item: results) {
-        v8::Local<v8::Object> result = New<v8::Object>();
+    for(auto item: files) {
+        auto obj = Object::New(Env());
 
-        result->Set(New<v8::String>("name").ToLocalChecked(), 
-            New<v8::String>((uint16_t*)item.display_name.c_str()).ToLocalChecked()); 
-            result->Set(New<v8::String>("size").ToLocalChecked(), New<v8::Number>(static_cast<double>(item.size)));
-            result->Set(New<v8::String>("time").ToLocalChecked(), New<v8::Date>(static_cast<double>(item.time)).ToLocalChecked());
-            result->Set(New<v8::String>("isDirectory").ToLocalChecked(), New<v8::Boolean>(item.is_directory));
-            result->Set(New<v8::String>("isHidden").ToLocalChecked(), New<v8::Boolean>(item.is_hidden));
-        result_list->Set(i++, result);
-    }        
+        obj.Set("name", WString::New(Env(), item.display_name));
+        obj.Set("size", Number::New(Env(), static_cast<double>(item.size)));
+        napi_value time;
+        napi_create_date(Env(), static_cast<double>(item.time), &time);
+        obj.Set("time", time);
+        obj.Set("isDirectory", Boolean::New(Env(), item.is_directory));
+        obj.Set("isHidden", Boolean::New(Env(), item.is_hidden));
 
-    v8::Local<v8::Value> argv[] = { Null(), result_list};
-    callback->Call(2, argv, async_resource);
+        array.Set(i++, obj);
+    }
+
+    deferred.Resolve(array);
+}
+
+Value GetFiles(const CallbackInfo& info) {
+    auto directory = info[0].As<WString>().WValue();
+
+    auto worker = new Get_files_worker(info.Env(), directory);
+    worker->Queue();
+    return worker->Promise();
 }

@@ -1,22 +1,48 @@
-const addon = require('../extension-fs')
+const addon = require('bindings')('extension-fs')
+
+let i = 1
+
+const renn = async  () => {
+    let files = await addon.getFiles("d:/Test😎😎😎")
+    console.log(i++)
+}
+
+renn()
+renn()
+renn()
+renn()
+renn()
+renn()
+renn()
+renn()
+renn()
+renn()
+renn()
+renn()
+renn()
+renn()
+renn()
+renn()
+
+
 
 const run = async () => {
     let hrstart = process.hrtime()
-    for (let i = 0; i < 1000; i++) {
-        let exifDatum = await addon.getExifDate("A:\\Bilder\\2015\\Canon\\IMG_8420.JPG")
-    }
+    // for (let i = 0; i < 1000; i++) {
+    //     let exifDatum = await addon.getExifDate("A:\\Bilder\\2015\\Canon\\IMG_8420.JPG")
+    // }
     let diff = process.hrtime(hrstart)
     console.info(`Execution time getExifDate (hr): ${(diff[1] / 1000000.0)}`)
 
-    let exifDatum = await addon.getExifDate("A:\\Bilder\\2015\\Canon\\IMG_8420gg.JPG")
-    if (exifDatum)
-        console.log(exifDatum)
+    // let exifDatum = await addon.getExifDate("A:\\Bilder\\2015\\Canon\\IMG_8420gg.JPG")
+    // if (exifDatum)
+    //     console.log(exifDatum)
 
     hrstart = process.hrtime()
-    drives = await addon.getDrives() 
+//    drives = await addon.getDrives() 
     diff = process.hrtime(hrstart)
     console.info(`Execution time drives (hr): ${(diff[1] / 1000000.0)}`)
-    console.log(drives)
+//    console.log(drives)
 
 
 
@@ -30,27 +56,27 @@ const run = async () => {
     diff = process.hrtime(hrstart)
     console.info(`Execution time files c:/windows/system32: ${(diff[1] / 1000000.0)}`)
 
-    hrstart = process.hrtime()
-    let icon = await addon.getIcon(".exe")
-    diff = process.hrtime(hrstart)
-    console.info(`Execution time geticon .exe (hr): ${(diff[1] / 1000000.0)}`)
+    // hrstart = process.hrtime()
+    // let icon = await addon.getIcon(".exe")
+    // diff = process.hrtime(hrstart)
+    // console.info(`Execution time geticon .exe (hr): ${(diff[1] / 1000000.0)}`)
 
     console.log("Finished")
 
-    hrstart = process.hrtime()
-    let version = await addon.getFileVersion(`C:\\Program Files\\internet explorer\\iexplore.exe`)
-    diff = process.hrtime(hrstart)
-    console.info(`Execution getFileVersion: ${(diff[1] / 1000000.0)}`)
+    // hrstart = process.hrtime()
+    // let version = await addon.getFileVersion(`C:\\Program Files\\internet explorer\\iexplore.exe`)
+    // diff = process.hrtime(hrstart)
+    // console.info(`Execution getFileVersion: ${(diff[1] / 1000000.0)}`)
 
     hrstart = process.hrtime()
     files = await addon.getFiles("c:/windows/system32")
     diff = process.hrtime(hrstart)
     console.info(`Execution time files c:/windows/system32 (hr): ${(diff[1] / 1000000.0)}`)
 
-    hrstart = process.hrtime()
-    version = await addon.getFileVersion(`C:\\Program Files\\internet explorer\\iexplore.exe`)
-    diff = process.hrtime(hrstart)
-    console.info(`Execution getFileVersion: ${(diff[1] / 1000000.0)}`)
+    // hrstart = process.hrtime()
+    // version = await addon.getFileVersion(`C:\\Program Files\\internet explorer\\iexplore.exe`)
+    // diff = process.hrtime(hrstart)
+    // console.info(`Execution getFileVersion: ${(diff[1] / 1000000.0)}`)
 
     // hrstart = process.hrtime()
     // files.forEach(async n => {
