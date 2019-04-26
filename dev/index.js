@@ -2,15 +2,15 @@ const addon = require('bindings')('extension-fs')
 
 const run = async () => {
     let hrstart = process.hrtime()
-    // for (let i = 0; i < 1000; i++) {
-    //     let exifDatum = await addon.getExifDate("A:\\Bilder\\2015\\Canon\\IMG_8420.JPG")
-    // }
+    for (let i = 0; i < 1000; i++) {
+        let exifDatum = await addon.getExifDate("A:\\Bilder\\2015\\Canon\\IMG_8420.JPG")
+    }
     let diff = process.hrtime(hrstart)
     console.info(`Execution time getExifDate (hr): ${(diff[1] / 1000000.0)}`)
 
-    // let exifDatum = await addon.getExifDate("A:\\Bilder\\2015\\Canon\\IMG_8420gg.JPG")
-    // if (exifDatum)
-    //     console.log(exifDatum)
+    let exifDatum = await addon.getExifDate("A:\\Bilder\\2015\\Canon\\IMG_8420.JPG")
+    if (exifDatum)
+        console.log(exifDatum)
 
     hrstart = process.hrtime()
     drives = await addon.getDrives() 

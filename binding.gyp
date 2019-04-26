@@ -6,6 +6,8 @@
             'get_files_worker.cpp',
             'get_drives_worker.cpp',
             'get_icon_worker.cpp',
+            'get_exif_date_worker.cpp',
+            'exif_reader.cpp',
             'std_utils.cpp',
             'nullfunction.cpp',
             'windows/utils.cpp',
