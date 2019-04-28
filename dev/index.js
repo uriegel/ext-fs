@@ -59,6 +59,11 @@ const run = async () => {
 }
 run()
 
+addon.showInfo("C:\\Program Files\\nodejs\\node.exe")
+addon.open("C:\\Windows\\notepad.exe")
+addon.open("C:\\Windows\\system.ini")
+addon.openAs("C:\\Windows\\system.ini")
+
 let i = 1
 
 const renn = async  () => {

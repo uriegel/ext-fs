@@ -13,6 +13,7 @@
             'nullfunction.cpp',
             'windows/utils.cpp',
             'windows/get_icon.cpp',
+            'windows/shell.cpp',
         ],
         'include_dirs': ["<!@(node -p \"require('node-addon-api').include\")"],
         'dependencies': ["<!(node -p \"require('node-addon-api').gyp\")"],
