@@ -1,5 +1,12 @@
 const addon = require('bindings')('extension-fs')
 
+try {
+    addon.createFolder("c:\\windows\\test1")
+ } catch (err) {
+     console.log("Ging nich", err)
+ }
+
+
 const run = async () => {
     let hrstart = process.hrtime()
     for (let i = 0; i < 1000; i++) {
