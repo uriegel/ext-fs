@@ -50,20 +50,21 @@ void create_directory(const Env& env, wstring& path) {
 
         auto parts = split(path, L'\\');
         newFolder.append(parts[parts.size() - 1]);
-        newFolder.append(L"\\\0\0");
+        newFolder.append(L"\\A");
+        newFolder[newFolder.length() - 1] = '\0';
         CreateDirectoryW(newFolder.c_str(), nullptr);
         
         SHFILEOPSTRUCTW op;
         op.hwnd = nullptr;
         op.wFunc = FO_MOVE;
-        op.pFrom = newFolder.c_str();
-
-		wstring target = parts[0];
+		op.pFrom = newFolder.c_str();
+	    wstring target = parts[0];
 		for (auto i = 1; i < parts.size() - 1; i++) {
-			target.append(L"\\");
-			target.append(parts[i]);
+		 	target.append(L"\\");
+		 	target.append(parts[i]);
 		}
-		target.append(L"\0\0");
+		target.append(L"\\A");
+        target[target.length() - 1] = '\0';
         op.pTo = target.c_str();
         op.fFlags = 0;
         op.fAnyOperationsAborted = FALSE;
@@ -71,6 +72,7 @@ void create_directory(const Env& env, wstring& path) {
         op.lpszProgressTitle = nullptr;
         result = SHFileOperationW(&op);
         DeleteFileW(filename);
+        printf("%sl", filename);
 
         if (result != 0) {
             char buffer[400];
