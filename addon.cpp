@@ -33,7 +33,7 @@ Value OpenAs(const CallbackInfo& info) {
 
 Value CreateFolder(const CallbackInfo& info) {
     auto path = info[0].As<WString>().WValue();
-    auto result = create_directory(info.Env(), path);
+    create_directory(info.Env(), path);
     return info.Env().Undefined();
 }
 

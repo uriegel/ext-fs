@@ -4,7 +4,6 @@
 #include "utils.h"
 #include "..\std_utils.h"
 using namespace std;
-using namespace Napi;
 
 uint64_t convert_windowstime_to_unixtime(const FILETIME& ft) {
 	ULARGE_INTEGER ull;
@@ -13,10 +12,10 @@ uint64_t convert_windowstime_to_unixtime(const FILETIME& ft) {
 	return (ull.QuadPart / 10000000ULL - 11644473600ULL) * 1000;
 }
 
-string format_message(int lastError) {
+string format_message(int last_error) {
     char* message{nullptr};
     FormatMessageA(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
-    nullptr, lastError, 0, reinterpret_cast<char*>(&message), 0, nullptr);
+    nullptr, last_error, 0, reinterpret_cast<char*>(&message), 0, nullptr);
     string result(message);
     LocalFree(message);
     return result;
@@ -127,14 +126,6 @@ Version_info get_file_info_version(const wstring& file_name) {
         HIWORD(info->dwFileVersionLS),
         LOWORD(info->dwFileVersionLS)
     };
-}
-
-int create_directory(const Env& env, wstring& path) {
-    int result = CreateDirectoryW(path.c_str(), nullptr) ? 0 : GetLastError();
-    if (result != 0)
-        throw Error::New(env, format_message(result).c_str());
-
-    return result;
 }
 
 void combine_path(wstring& path, const wstring& path_to_combine) {

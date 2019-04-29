@@ -1,5 +1,4 @@
 #pragma once
-#include <napi.h>
 #include <Windows.h>
 #include <string>
 #include <vector>
@@ -25,4 +24,4 @@ void get_drives(std::vector<Drive_item>& drive_items);
 void get_files(const std::wstring& directory, std::vector<File_item>& file_items);
 Version_info get_file_info_version(const std::wstring& file_name);
 void combine_path(std::wstring& path, const std::wstring& path_to_combine);
-int create_directory(const Napi::Env& env, std::wstring& path);
+std::string format_message(int last_error); 
