@@ -31,7 +31,7 @@ Value OpenAs(const CallbackInfo& info) {
     return info.Env().Undefined();
 }
 
-Value CreateFolder(const CallbackInfo& info) {
+Value CreateDirectory1(const CallbackInfo& info) {
     auto path = info[0].As<WString>().WValue();
     create_directory(info.Env(), path);
     return info.Env().Undefined();
@@ -46,7 +46,7 @@ Object Init(Env env, Object exports) {
     exports.Set(String::New(env, "showInfo"), Function::New(env, ShowInfo));
     exports.Set(String::New(env, "open"), Function::New(env, Open));
     exports.Set(String::New(env, "openAs"), Function::New(env, OpenAs));
-    exports.Set(String::New(env, "createFolder"), Function::New(env, CreateFolder));
+    exports.Set(String::New(env, "createDirectory"), Function::New(env, CreateDirectory1));
     return exports;
 }
 
