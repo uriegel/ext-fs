@@ -35,23 +35,39 @@ void show_properties(const wchar_t* path) {
     ShellExecuteExW(&info);
 }
 
-void create_directory(const Env& env, wstring& path) {
+void delete_directory(wstring path) {
+    SHFILEOPSTRUCTW op;
+    op.hwnd = nullptr;
+    op.wFunc = FO_DELETE;
+    path.append(L"A");
+    path[path.size() - 1] = 0;
+	op.pFrom = path.c_str();
+    op.pTo = nullptr;
+    op.fFlags = FOF_NOCONFIRMATION;
+    op.fAnyOperationsAborted = FALSE;
+    op.hNameMappings = nullptr;
+    op.lpszProgressTitle = nullptr;
+    auto result = SHFileOperationW(&op);
+}
+
+void create_directory(const Env& env, const wstring& path) {
     int result = CreateDirectoryW(path.c_str(), nullptr) ? 0 : GetLastError();
     if (result == 5) {
         wchar_t temp[MAX_PATH];
         GetTempPathW(MAX_PATH, temp);
-        wchar_t filename[MAX_PATH];
-        GetTempFileNameW(temp, L"xxx", 0, filename);
-		DeleteFileW(filename);
-        CreateDirectoryW(filename, nullptr);
-        wcscat(filename, L"\\");
+        wchar_t buffer[MAX_PATH];
+        GetTempFileNameW(temp, L"xxx", 0, buffer);
+        wstring tempDirectory(buffer);
+		DeleteFileW(tempDirectory.c_str());
+        CreateDirectoryW(tempDirectory.c_str(), nullptr);
 
-        wstring newFolder(filename);
-
+        
+        wstring newFolder(tempDirectory);
+		newFolder.append(L"\\");
         auto parts = split(path, L'\\');
         newFolder.append(parts[parts.size() - 1]);
         newFolder.append(L"\\A");
-        newFolder[newFolder.length() - 1] = '\0';
+        newFolder[newFolder.length() - 1] = 0;
         CreateDirectoryW(newFolder.c_str(), nullptr);
         
         SHFILEOPSTRUCTW op;
@@ -64,15 +80,14 @@ void create_directory(const Env& env, wstring& path) {
 		 	target.append(parts[i]);
 		}
 		target.append(L"\\A");
-        target[target.length() - 1] = '\0';
+        target[target.length() - 1] = 0;
         op.pTo = target.c_str();
         op.fFlags = 0;
         op.fAnyOperationsAborted = FALSE;
         op.hNameMappings = nullptr;
         op.lpszProgressTitle = nullptr;
         result = SHFileOperationW(&op);
-        DeleteFileW(filename);
-        printf("%sl", filename);
+        delete_directory(tempDirectory);
 
         if (result != 0) {
             char buffer[400];
