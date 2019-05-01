@@ -97,3 +97,21 @@ void create_directory(const wstring& path, wstring& error, int& error_code) {
         error = format_message(error_code).c_str();
 }
 
+void rename(wstring name, wstring new_name, wstring& error, int& error_code) {
+    SHFILEOPSTRUCTW op;
+    op.hwnd = nullptr;
+    op.wFunc = FO_RENAME;
+    name.append(L"\\A");
+    name[name.length() - 1] = 0;
+    op.pFrom = name.c_str();
+    new_name.append(L"\\A");
+    new_name[new_name.length() - 1] = 0;
+    op.pTo = new_name.c_str();
+    op.fFlags = 0;
+    op.fAnyOperationsAborted = FALSE;
+    op.hNameMappings = nullptr;
+    op.lpszProgressTitle = nullptr;
+    error_code = SHFileOperationW(&op);
+    if (error_code != 0) 
+        error = L"Konnte nicht umbenennen";
+}

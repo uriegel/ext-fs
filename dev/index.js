@@ -9,6 +9,13 @@ const run = async () => {
          console.log("Ging nich", err)
     }
 
+    try {
+        await addon.rename("C:\\Users\\urieg\\Desktop", "name.txt", "neuerName.txt")
+    } catch (err) {
+         console.log("Ging nich", err)
+    }
+    
+
     let hrstart = process.hrtime()
     for (let i = 0; i < 1000; i++) {
         let exifDatum = await addon.getExifDate("A:\\Bilder\\2015\\Canon\\IMG_8420.JPG")

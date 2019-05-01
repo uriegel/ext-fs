@@ -6,6 +6,7 @@
 #include "get_file_version_worker.h"
 #include "get_exif_date_worker.h"
 #include "create_directory_worker.h"
+#include "rename_worker.h"
 #include "wstring.h"
 #if WINDOWS
 #include "windows/shell.h"
@@ -42,6 +43,7 @@ Object Init(Env env, Object exports) {
     exports.Set(String::New(env, "open"), Function::New(env, Open));
     exports.Set(String::New(env, "openAs"), Function::New(env, OpenAs));
     exports.Set(String::New(env, "createDirectory"), Function::New(env, CreateDirectory1));
+    exports.Set(String::New(env, "rename"), Function::New(env, Rename));
     return exports;
 }
 

@@ -39,4 +39,5 @@ declare module 'extension-fs' {
     function openAs(path: string): any
     function showInfo(path: string): any
     function createDirectory(path: string): Promise<any>
+    function rename(path: string, name: string, newName: string): Promise<any>
 }

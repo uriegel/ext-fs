@@ -128,8 +128,9 @@ Version_info get_file_info_version(const wstring& file_name) {
     };
 }
 
-void combine_path(wstring& path, const wstring& path_to_combine) {
+wstring combine_path(wstring path, const wstring& path_to_combine) {
     if (path[path.length() - 1] != L'\\')
         path.append(L"\\");
     path.append(path_to_combine);
+    return move(path);
 }
