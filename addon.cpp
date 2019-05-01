@@ -5,6 +5,7 @@
 #include "get_icon_worker.h"
 #include "get_file_version_worker.h"
 #include "get_exif_date_worker.h"
+#include "create_directory_worker.h"
 #include "wstring.h"
 #if WINDOWS
 #include "windows/shell.h"
@@ -28,12 +29,6 @@ Value Open(const CallbackInfo& info) {
 Value OpenAs(const CallbackInfo& info) {
     auto file = info[0].As<WString>().WValue();
     open_as(file.c_str());
-    return info.Env().Undefined();
-}
-
-Value CreateDirectory1(const CallbackInfo& info) {
-    auto path = info[0].As<WString>().WValue();
-    create_directory(info.Env(), path);
     return info.Env().Undefined();
 }
 

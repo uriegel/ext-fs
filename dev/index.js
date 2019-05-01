@@ -1,13 +1,14 @@
 const addon = require('bindings')('extension-fs')
 
-try {
-    addon.createFolder("c:\\windows\\test1")
- } catch (err) {
-     console.log("Ging nich", err)
- }
 
 
 const run = async () => {
+    try {
+        await addon.createDirectory("c:\\windows\\test1")
+    } catch (err) {
+         console.log("Ging nich", err)
+    }
+
     let hrstart = process.hrtime()
     for (let i = 0; i < 1000; i++) {
         let exifDatum = await addon.getExifDate("A:\\Bilder\\2015\\Canon\\IMG_8420.JPG")

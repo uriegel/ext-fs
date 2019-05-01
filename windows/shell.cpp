@@ -50,9 +50,9 @@ void delete_directory(wstring path) {
     auto result = SHFileOperationW(&op);
 }
 
-void create_directory(const Env& env, const wstring& path) {
-    int result = CreateDirectoryW(path.c_str(), nullptr) ? 0 : GetLastError();
-    if (result == 5) {
+void create_directory(const wstring& path, wstring& error, int& error_code) {
+    error_code = CreateDirectoryW(path.c_str(), nullptr) ? 0 : GetLastError();
+    if (error_code == 5) {
         wchar_t temp[MAX_PATH];
         GetTempPathW(MAX_PATH, temp);
         wchar_t buffer[MAX_PATH];
@@ -60,7 +60,6 @@ void create_directory(const Env& env, const wstring& path) {
         wstring tempDirectory(buffer);
 		DeleteFileW(tempDirectory.c_str());
         CreateDirectoryW(tempDirectory.c_str(), nullptr);
-
         
         wstring newFolder(tempDirectory);
 		newFolder.append(L"\\");
@@ -86,16 +85,15 @@ void create_directory(const Env& env, const wstring& path) {
         op.fAnyOperationsAborted = FALSE;
         op.hNameMappings = nullptr;
         op.lpszProgressTitle = nullptr;
-        result = SHFileOperationW(&op);
+        error_code = SHFileOperationW(&op);
         delete_directory(tempDirectory);
 
-        if (result != 0) {
-            char buffer[400];
-            sprintf(buffer, "Konnte den Ordner nicht anlegen: %d", result);
-            throw Error::New(env, buffer);
+        if (error_code != 0) {
+            error = L"Konnte den Ordner nicht anlegen";
+            return;
         }
     }
-    else if (result != 0)
-        throw Error::New(env, format_message(result).c_str());
+    else if (error_code != 0)
+        error = format_message(error_code).c_str();
 }
 

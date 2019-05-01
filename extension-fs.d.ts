@@ -38,5 +38,5 @@ declare module 'extension-fs' {
     function open(path: string): any
     function openAs(path: string): any
     function showInfo(path: string): any
-    function createDirectory(path: string): any
+    function createDirectory(path: string): Promise<any>
 }

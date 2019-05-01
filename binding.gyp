@@ -8,6 +8,7 @@
             'get_icon_worker.cpp',
             'get_exif_date_worker.cpp',
             'get_file_version_worker.cpp',
+            'create_directory_worker.cpp',
             'exif_reader.cpp',
             'std_utils.cpp',
             'nullfunction.cpp',
