@@ -115,3 +115,21 @@ void rename(wstring name, wstring new_name, wstring& error, int& error_code) {
     if (error_code != 0) 
         error = L"Konnte nicht umbenennen";
 }
+
+void delete_files(const vector<wstring>& files, wstring& error, int& error_code) {
+    SHFILEOPSTRUCTW op;
+    op.hwnd = nullptr;
+    op.wFunc = FO_DELETE;
+    auto files_buffer = join(files, 0);
+    files_buffer.append(L"\\A");
+    files_buffer[files_buffer.length() - 1] = 0;
+    op.pFrom = files_buffer.c_str();
+    op.pTo = nullptr;
+    op.fFlags = FOF_ALLOWUNDO | FOF_NOCONFIRMATION;
+    op.fAnyOperationsAborted = FALSE;
+    op.hNameMappings = nullptr;
+    op.lpszProgressTitle = nullptr;
+    error_code = SHFileOperationW(&op);
+    if (error_code != 0) 
+        error = L"Konnte nicht löschen";
+}

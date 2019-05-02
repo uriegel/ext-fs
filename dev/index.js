@@ -1,10 +1,22 @@
 const addon = require('bindings')('extension-fs')
 
-
-
 const run = async () => {
     try {
-        await addon.createDirectory("c:\\windows\\test1")
+        await addon.createDirectory("d:\\test\\affe")
+        await addon.createDirectory("d:\\test\\affe2")
+    } catch (err) {
+         console.log("Ging nich", err)
+    }
+
+
+    try {
+        await addon.deleteFiles(["d:\\test\\affe", "d:\\test\\affe2"])
+    } catch (err) {
+         console.log("Ging nich", err)
+    }
+
+    try {
+        await addon.deleteFiles(["c:\\windows\\affe"])
     } catch (err) {
          console.log("Ging nich", err)
     }

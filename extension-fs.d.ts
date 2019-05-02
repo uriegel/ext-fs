@@ -40,4 +40,5 @@ declare module 'extension-fs' {
     function showInfo(path: string): any
     function createDirectory(path: string): Promise<any>
     function rename(path: string, name: string, newName: string): Promise<any>
+    function deleteFiles(files: string[]): Promise<any>
 }

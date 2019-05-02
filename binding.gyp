@@ -10,6 +10,7 @@
             'get_file_version_worker.cpp',
             'create_directory_worker.cpp',
             'rename_worker.cpp',
+            'delete_files_worker.cpp',
             'exif_reader.cpp',
             'std_utils.cpp',
             'nullfunction.cpp',

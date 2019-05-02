@@ -14,6 +14,16 @@ const vector<wstring> split(const wstring& s, wchar_t delim) {
 	return move(elems);
 }
 
+wstring join(const vector<wstring>& arr, wchar_t delim) {
+    wstring result;
+    for (auto it = arr.begin(); it < arr.end(); it++) {
+        if (!result.empty())
+            result += delim;
+        result.append(*it);
+    }
+    return move(result);
+}
+
 int findString(const wstring &text, const wstring& searchText) {
     auto it = search(text.begin(), text.end(),
         searchText.begin(), searchText.end(),
