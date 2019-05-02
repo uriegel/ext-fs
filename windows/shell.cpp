@@ -133,3 +133,24 @@ void delete_files(const vector<wstring>& files, wstring& error, int& error_code)
     if (error_code != 0) 
         error = L"Konnte nicht löschen";
 }
+
+void copy_files(const vector<wstring>& files, const vector<wstring>& targets, bool move, bool no_ui, wstring& error, int& error_code) {
+    SHFILEOPSTRUCTW op;
+    op.hwnd = nullptr;
+    op.wFunc = move ? FO_MOVE : FO_COPY;
+    auto files_buffer = join(files, 0);
+    files_buffer.append(L"\\A");
+    files_buffer[files_buffer.length() - 1] = 0;
+    op.pFrom = files_buffer.c_str();
+    auto targets_buffer = join(targets, 0);
+    targets_buffer.append(L"\\A");
+    targets_buffer[targets_buffer.length() - 1] = 0;
+    op.pTo = targets_buffer.c_str();
+    op.fFlags = no_ui ? FOF_NOCONFIRMATION | FOF_NOCONFIRMMKDIR : 0;
+    op.fAnyOperationsAborted = FALSE;
+    op.hNameMappings = nullptr;
+    op.lpszProgressTitle = nullptr;
+    error_code = SHFileOperationW(&op);
+    if (error_code != 0) 
+        error = move ? L"Konnte nicht verschieben" : L"Konnte nicht kopieren";
+}

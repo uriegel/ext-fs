@@ -8,6 +8,7 @@
 #include "create_directory_worker.h"
 #include "rename_worker.h"
 #include "delete_files_worker.h"
+#include "copy_worker.h"
 #include "wstring.h"
 #if WINDOWS
 #include "windows/shell.h"
@@ -46,6 +47,8 @@ Object Init(Env env, Object exports) {
     exports.Set(String::New(env, "createDirectory"), Function::New(env, CreateDirectory1));
     exports.Set(String::New(env, "rename"), Function::New(env, Rename));
     exports.Set(String::New(env, "deleteFiles"), Function::New(env, DeleteFiles));
+    exports.Set(String::New(env, "copyFiles"), Function::New(env, CopyFiles));
+    exports.Set(String::New(env, "moveFiles"), Function::New(env, MoveFiles));
     return exports;
 }
 

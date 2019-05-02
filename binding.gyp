@@ -11,6 +11,7 @@
             'create_directory_worker.cpp',
             'rename_worker.cpp',
             'delete_files_worker.cpp',
+            'copy_worker.cpp',
             'exif_reader.cpp',
             'std_utils.cpp',
             'nullfunction.cpp',
