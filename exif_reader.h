@@ -137,7 +137,7 @@ class Exif_reader
 public:
 	Exif_reader(const std::wstring& path)
 #if WINDOWS
-	: exif_stream(std::ifstream(path) { }
+	: exif_stream(std::ifstream(path)) { }
 #else
 	: exif_stream(std::ifstream(ws2utf8(path))) { }
 #endif
