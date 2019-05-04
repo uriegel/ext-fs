@@ -3,6 +3,7 @@
 #include <vector>
 #include <fstream>
 #include <map>
+#include "std_utils.h"
 
 enum class Exif_tag {
 	// IFD0 items
@@ -135,8 +136,11 @@ class Exif_reader
 {
 public:
 	Exif_reader(const std::wstring& path)
-	: exif_stream(path, std::ofstream::binary) { }
-
+#if WINDOWS
+	: exif_stream(std::ifstream(path) { }
+#else
+	: exif_stream(std::ifstream(ws2utf8(path))) { }
+#endif
 	bool initialize();
 
 	std::tuple<bool, int> get_tag_int(Exif_tag tag);

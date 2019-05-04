@@ -2,12 +2,13 @@
 #include <sstream>
 #include <iomanip>
 #include <chrono>
+#include <algorithm>
 using namespace std;
 
 uint64_t get_exif_date(const wstring& file) {
     Exif_reader er(file);
 	auto res = er.initialize();
-    if (!res)
+	if (!res)
         return 0;
 	bool success;
 	string result;

@@ -17,15 +17,16 @@ class Get_exif_date_worker : public AsyncWorker {
 public:
     Get_exif_date_worker(const Napi::Env& env, const wstring& file)
     : AsyncWorker(Function::New(env, NullFunction, "theFunction"))
+    , deferred(Promise::Deferred::New(Env())) 
     , file(file)
-    , deferred(Promise::Deferred::New(Env())) {}
+   {} 
     ~Get_exif_date_worker() {}
 
     void Execute () { exif_date = get_exif_date(file); }
 
     void OnOK();
 
-    Promise Promise() { return deferred.Promise(); }
+    Promise GetPromise() { return deferred.Promise(); }
 
 private:
     Promise::Deferred deferred;
@@ -50,5 +51,5 @@ Value GetExifDate(const CallbackInfo& info) {
 
     auto worker = new Get_exif_date_worker(info.Env(), file);
     worker->Queue();
-    return worker->Promise();
+    return worker->GetPromise();
 }

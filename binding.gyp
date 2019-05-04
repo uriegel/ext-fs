@@ -21,7 +21,7 @@
         ],
         'include_dirs': ["<!@(node -p \"require('node-addon-api').include\")"],
         'dependencies': ["<!(node -p \"require('node-addon-api').gyp\")"],
-        "cflags": ["-Wall", "-std=c++14"],
+        "cflags": ["-Wall", "-std=c++17"],
         'cflags!': [ '-fno-exceptions' ],
         'cflags_cc!': [ '-fno-exceptions' ],
         'link_settings': {
@@ -50,7 +50,7 @@
                     'rename_worker.cpp',
                     'delete_files_worker.cpp',
                     'copy_worker.cpp',
-                    './windows/utils.cpp',
+                    'windows/utils.cpp',
                     'windows/get_icon.cpp',
                     'windows/shell.cpp'
                 ],
