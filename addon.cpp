@@ -17,6 +17,7 @@
 #endif
 using namespace Napi;
 
+#if WINDOWS
 Value ShowInfo(const CallbackInfo& info) {
     auto file = info[0].As<WString>().WValue();
     show_properties(file.c_str());
@@ -35,11 +36,16 @@ Value OpenAs(const CallbackInfo& info) {
     return info.Env().Undefined();
 }
 
+#endif
+
 Object Init(Env env, Object exports) {
+#if WINDOWS    
     exports.Set(String::New(env, "getFiles"), Function::New(env, GetFiles));
     exports.Set(String::New(env, "getDrives"), Function::New(env, GetDrives));
     exports.Set(String::New(env, "getIcon"), Function::New(env, GetIcon));
+#endif    
     exports.Set(String::New(env, "getExifDate"), Function::New(env, GetExifDate));
+#if WINDOWS        
     exports.Set(String::New(env, "getFileVersion"), Function::New(env, GetFileVersion));
     exports.Set(String::New(env, "showInfo"), Function::New(env, ShowInfo));
     exports.Set(String::New(env, "open"), Function::New(env, Open));
@@ -49,6 +55,7 @@ Object Init(Env env, Object exports) {
     exports.Set(String::New(env, "deleteFiles"), Function::New(env, DeleteFiles));
     exports.Set(String::New(env, "copyFiles"), Function::New(env, CopyFiles));
     exports.Set(String::New(env, "moveFiles"), Function::New(env, MoveFiles));
+#endif        
     return exports;
 }
 

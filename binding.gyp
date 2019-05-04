@@ -41,7 +41,17 @@
             ['OS=="linux"', {
                 'defines': ['LINUX'],
                 'sources!': [
-                    './windows/utils.cpp'  
+                    'get_files_worker.cpp',
+                    'get_drives_worker.cpp',
+                    'get_icon_worker.cpp',
+                    'get_file_version_worker.cpp',
+                    'create_directory_worker.cpp',
+                    'rename_worker.cpp',
+                    'delete_files_worker.cpp',
+                    'copy_worker.cpp',
+                    './windows/utils.cpp',
+                    'windows/get_icon.cpp',
+                    'windows/shell.cpp'
                 ],
                 'libraries!': [ 
                     "gdiplus.lib",
