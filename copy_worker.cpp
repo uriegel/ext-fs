@@ -14,16 +14,16 @@ using namespace std;
 
 class Copy_worker : public AsyncWorker {
 public:
-    Copy_worker(const Napi::Env& env, const vector<wstring>& files, const vector<wstring>& targets, bool move, bool no_ui)
+    Copy_worker(const Napi::Env& env, const vector<wstring>& files, const wstring& target, bool move, bool no_ui)
     : AsyncWorker(Function::New(env, NullFunction, "theFunction"))
     , files(files)
-    , targets(targets)
+    , target(target)
     , move(move)
     , no_ui(no_ui)
     , deferred(Promise::Deferred::New(Env())) {}
     ~Copy_worker() {}
 
-    void Execute () { copy_files(files, targets, move, no_ui, error, error_code); }
+    void Execute () { copy_files(files, target, move, no_ui, error, error_code); }
 
     void OnOK() {
         HandleScope scope(Env());
@@ -41,7 +41,7 @@ public:
 
 private:
     vector<wstring> files;
-    vector<wstring> targets;
+    wstring target;
     bool move;
     bool no_ui;
     wstring error;
@@ -51,15 +51,12 @@ private:
 
 Value copy_files(const CallbackInfo& info, bool move) {
     auto files_array = info[0].As<Array>();
-    auto targets_array = info[1].As<Array>();
     vector<wstring> files;
     for (auto i = 0U; i < files_array.Length(); i++) 
         files.push_back(files_array.Get(i).As<WString>());
-    vector<wstring> targets;
-    for (auto i = 0U; i < targets_array.Length(); i++) 
-        targets.push_back(targets_array.Get(i).As<WString>());
+    auto target = info[1].As<WString>();
     auto no_ui = info[2].As<Boolean>();
-    auto worker = new Copy_worker(info.Env(), files, targets, move, no_ui);
+    auto worker = new Copy_worker(info.Env(), files, target, move, no_ui);
     worker->Queue();
     return worker->Promise();
 }

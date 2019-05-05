@@ -134,7 +134,7 @@ void delete_files(const vector<wstring>& files, wstring& error, int& error_code)
         error = L"Konnte nicht löschen";
 }
 
-void copy_files(const vector<wstring>& files, const vector<wstring>& targets, bool move, bool no_ui, wstring& error, int& error_code) {
+void copy_files(const vector<wstring>& files, wstring target, bool move, bool no_ui, wstring& error, int& error_code) {
     SHFILEOPSTRUCTW op;
     op.hwnd = nullptr;
     op.wFunc = move ? FO_MOVE : FO_COPY;
@@ -142,11 +142,10 @@ void copy_files(const vector<wstring>& files, const vector<wstring>& targets, bo
     files_buffer.append(L"\\A");
     files_buffer[files_buffer.length() - 1] = 0;
     op.pFrom = files_buffer.c_str();
-    auto targets_buffer = join(targets, 0);
-    targets_buffer.append(L"\\A");
-    targets_buffer[targets_buffer.length() - 1] = 0;
-    op.pTo = targets_buffer.c_str();
-    op.fFlags = no_ui ? FOF_NOCONFIRMATION | FOF_NOCONFIRMMKDIR : 0;
+    target.append(L"\\A");
+    target[target.length() - 1] = 0;
+    op.pTo = target.c_str();
+    op.fFlags = no_ui ? FOF_NOCONFIRMATION | FOF_NOCONFIRMMKDIR : FOF_NOCONFIRMMKDIR;
     op.fAnyOperationsAborted = FALSE;
     op.hNameMappings = nullptr;
     op.lpszProgressTitle = nullptr;
