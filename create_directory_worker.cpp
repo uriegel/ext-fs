@@ -28,7 +28,7 @@ public:
             deferred.Resolve(Env().Null());
         else {
             auto obj = Object::New(Env());
-            obj.Set("description", WString::New(Env(), error.c_str()));
+            obj.Set("description", String::New(Env(), error.c_str()));
             obj.Set("code", Number::New(Env(), static_cast<double>(error_code)));
             deferred.Reject(obj);
         }
@@ -38,7 +38,7 @@ public:
 
 private:
     wstring path;
-    wstring error;
+    string error;
     int error_code;
     Promise::Deferred deferred;
 };

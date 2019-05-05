@@ -12,11 +12,11 @@ uint64_t convert_windowstime_to_unixtime(const FILETIME& ft) {
 	return (ull.QuadPart / 10000000ULL - 11644473600ULL) * 1000;
 }
 
-wstring format_message(int last_error) {
-    wchar_t* message{nullptr};
-    FormatMessageW(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
-    nullptr, last_error, 0, reinterpret_cast<wchar_t*>(&message), 0, nullptr);
-    wstring result(message);
+string format_message(int last_error) {
+    char* message{nullptr};
+    FormatMessageA(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
+    nullptr, last_error, 0, reinterpret_cast<char*>(&message), 0, nullptr);
+    string result(message);
     LocalFree(message);
     return result;
 }

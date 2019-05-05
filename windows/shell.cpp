@@ -50,7 +50,7 @@ void delete_directory(wstring path) {
     auto result = SHFileOperationW(&op);
 }
 
-void create_directory(const wstring& path, wstring& error, int& error_code) {
+void create_directory(const wstring& path, string& error, int& error_code) {
     error_code = CreateDirectoryW(path.c_str(), nullptr) ? 0 : GetLastError();
     if (error_code == 5) {
         wchar_t temp[MAX_PATH];
@@ -89,7 +89,7 @@ void create_directory(const wstring& path, wstring& error, int& error_code) {
         delete_directory(tempDirectory);
 
         if (error_code != 0) {
-            error = L"Konnte den Ordner nicht anlegen";
+            error = "Konnte den Ordner nicht anlegen";
             return;
         }
     }
@@ -97,7 +97,7 @@ void create_directory(const wstring& path, wstring& error, int& error_code) {
         error = format_message(error_code).c_str();
 }
 
-void rename(wstring name, wstring new_name, wstring& error, int& error_code) {
+void rename(wstring name, wstring new_name, string& error, int& error_code) {
     SHFILEOPSTRUCTW op;
     op.hwnd = nullptr;
     op.wFunc = FO_RENAME;
@@ -113,10 +113,10 @@ void rename(wstring name, wstring new_name, wstring& error, int& error_code) {
     op.lpszProgressTitle = nullptr;
     error_code = SHFileOperationW(&op);
     if (error_code != 0) 
-        error = L"Konnte nicht umbenennen";
+        error = "Konnte nicht umbenennen";
 }
 
-void delete_files(const vector<wstring>& files, wstring& error, int& error_code) {
+void delete_files(const vector<wstring>& files, string& error, int& error_code) {
     SHFILEOPSTRUCTW op;
     op.hwnd = nullptr;
     op.wFunc = FO_DELETE;
@@ -131,10 +131,10 @@ void delete_files(const vector<wstring>& files, wstring& error, int& error_code)
     op.lpszProgressTitle = nullptr;
     error_code = SHFileOperationW(&op);
     if (error_code != 0) 
-        error = L"Konnte nicht löschen";
+        error = "Konnte nicht löschen";
 }
 
-void copy_files(const vector<wstring>& files, wstring target, bool move, bool no_ui, wstring& error, int& error_code) {
+void copy_files(const vector<wstring>& files, wstring target, bool move, bool no_ui, string& error, int& error_code) {
     SHFILEOPSTRUCTW op;
     op.hwnd = nullptr;
     op.wFunc = move ? FO_MOVE : FO_COPY;
@@ -151,5 +151,5 @@ void copy_files(const vector<wstring>& files, wstring target, bool move, bool no
     op.lpszProgressTitle = nullptr;
     error_code = SHFileOperationW(&op);
     if (error_code != 0) 
-        error = move ? L"Konnte nicht verschieben" : L"Konnte nicht kopieren";
+        error = move ? "Konnte nicht verschieben" : "Konnte nicht kopieren";
 }
