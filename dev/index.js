@@ -1,6 +1,27 @@
 const addon = require('bindings')('extension-fs')
 
 const run = async () => {
+
+
+    const f1 = await addon.getExifDate("A:\\Bilder\\2017\\Abu Dabbab\\M0015912.JPG")
+    const f2 = await addon.getExifDate("A:\\Bilder\\1968-1969\\GummiReiff.jpg")
+    const f3 = await addon.getExifDate("C:\\Users\\urieg\\Desktop\\Affe\\1968.jpg")
+    
+    
+
+    
+
+    const path = "A:/Bilder/2017/Abu Dabbab"
+    let exifFiles = await addon.getFiles(path)
+    let exifs  = await exifFiles.map(async n => {
+        const item = path + '/' + n.name
+        
+    })
+    
+
+
+
+
     try {
         await addon.createDirectory("d:\\test\\affe")
         await addon.createDirectory("d:\\test\\affe2")

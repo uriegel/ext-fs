@@ -12,7 +12,11 @@ uint64_t get_exif_date(const wstring& file) {
         return 0;
 	bool success;
 	string result;
-	tie(success, result) = er.get_tag_string(Exif_tag::DateTime);
+	tie(success, result) = er.get_tag_string(Exif_tag::DateTimeOriginal);
+    if (!success) 
+        tie(success, result) = er.get_tag_string(Exif_tag::DateTime);
+    if (!success)
+        return 0;
 
 	tm tm = {};
 	stringstream ss(result.c_str());
