@@ -1,6 +1,6 @@
 {
     "name": "extension-fs",
-    "version": "1.0.4",
+    "version": "1.0.5",
     "description": "Extensions to nodejs's fs",
     "main": "./build/Release/extension-fs",
     "gypfile": true,
