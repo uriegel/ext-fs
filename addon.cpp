@@ -5,6 +5,7 @@
 #include "get_icon_worker.h"
 #include "get_file_version_worker.h"
 #include "get_exif_date_worker.h"
+#include "get_conflicts_worker.h"
 #include "create_directory_worker.h"
 #include "rename_worker.h"
 #include "delete_files_worker.h"
@@ -45,6 +46,7 @@ Object Init(Env env, Object exports) {
     exports.Set(String::New(env, "getIcon"), Function::New(env, GetIcon));
 #endif    
     exports.Set(String::New(env, "getExifDate"), Function::New(env, GetExifDate));
+    exports.Set(String::New(env, "getConflicts"), Function::New(env, GetConflicts));
 #if WINDOWS        
     exports.Set(String::New(env, "getFileVersion"), Function::New(env, GetFileVersion));
     exports.Set(String::New(env, "showInfo"), Function::New(env, ShowInfo));
