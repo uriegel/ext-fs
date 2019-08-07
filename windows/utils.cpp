@@ -107,6 +107,7 @@ void get_files(const wstring& directory, vector<File_item>& file_items) {
             convert_windowstime_to_unixtime(w32fd.ftLastWriteTime)
         });
     }
+	FindClose(ret);
 }
 
 Version_info get_file_info_version(const wstring& file_name) {
@@ -129,7 +130,7 @@ Version_info get_file_info_version(const wstring& file_name) {
 }
 
 wstring combine_path(wstring path, const wstring& path_to_combine) {
-    if (path[path.length() - 1] != L'\\')
+    if (path.length() > 0 && path[path.length() - 1] != L'\\')
         path.append(L"\\");
     path.append(path_to_combine);
     return move(path);

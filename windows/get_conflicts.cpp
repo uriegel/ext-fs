@@ -8,14 +8,24 @@ using namespace std;
 void get_conflicts(const wstring& sourcePath, const wstring& targetPath, const wstring& subPath, 
                     const WIN32_FIND_DATAW& sourceInfo, vector<Conflict_item>& conflicts) {
     auto isDir = (sourceInfo.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) == FILE_ATTRIBUTE_DIRECTORY;
-    if (isDir) {
-        // TODO: (2) Alle Dateien und Ordner ermitteln und diese Funktion rekursiv aufrufen
-    } else {
-        auto path = combine_path(targetPath, sourceInfo.cFileName);
-        WIN32_FILE_ATTRIBUTE_DATA targetInfo;
-        if (GetFileAttributesExW(path.c_str(), GetFileExInfoStandard, &targetInfo)) {
+    auto path = combine_path(targetPath, subPath + L"\\" + sourceInfo.cFileName);
+    WIN32_FILE_ATTRIBUTE_DATA targetInfo;
+    if (GetFileAttributesExW(path.c_str(), GetFileExInfoStandard, &targetInfo)) {
+        if (isDir) {
+            // TODO: (2) Alle Dateien und Ordner ermitteln und diese Funktion rekursiv aufrufen
+            auto dirPath = combine_path(subPath, sourceInfo.cFileName);
+            WIN32_FIND_DATAW w32fd{ 0 };
+            path = combine_path(sourcePath, dirPath) + L"\\*.*";
+            auto ret = FindFirstFileW(path.c_str(), &w32fd);
+            if (ret != INVALID_HANDLE_VALUE) {
+                FindNextFileW(ret, &w32fd); // ..
+                while (FindNextFileW(ret, &w32fd) == TRUE) 
+                    get_conflicts(sourcePath, targetPath, dirPath, w32fd, conflicts);
+            }
+            FindClose(ret);
+        } else {
             conflicts.emplace_back(Conflict_item {
-                sourceInfo.cFileName,
+                combine_path(subPath, sourceInfo.cFileName),
                 static_cast<uint64_t>(sourceInfo.nFileSizeHigh) << 32 | sourceInfo.nFileSizeLow,
                 convert_windowstime_to_unixtime(sourceInfo.ftLastWriteTime),
                 {0},
