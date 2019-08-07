@@ -12,7 +12,6 @@ void get_conflicts(const wstring& sourcePath, const wstring& targetPath, const w
     WIN32_FILE_ATTRIBUTE_DATA targetInfo;
     if (GetFileAttributesExW(path.c_str(), GetFileExInfoStandard, &targetInfo)) {
         if (isDir) {
-            // TODO: (2) Alle Dateien und Ordner ermitteln und diese Funktion rekursiv aufrufen
             auto dirPath = combine_path(subPath, sourceInfo.cFileName);
             WIN32_FIND_DATAW w32fd{ 0 };
             path = combine_path(sourcePath, dirPath) + L"\\*.*";
@@ -24,6 +23,7 @@ void get_conflicts(const wstring& sourcePath, const wstring& targetPath, const w
             }
             FindClose(ret);
         } else {
+            // TODO: if exe or dll, retrieve version info
             conflicts.emplace_back(Conflict_item {
                 combine_path(subPath, sourceInfo.cFileName),
                 static_cast<uint64_t>(sourceInfo.nFileSizeHigh) << 32 | sourceInfo.nFileSizeLow,
