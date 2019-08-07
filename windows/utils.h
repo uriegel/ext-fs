@@ -20,6 +20,7 @@ private:
 	HANDLE handle{ INVALID_HANDLE_VALUE };
 };
 
+uint64_t convert_windowstime_to_unixtime(const FILETIME& ft);
 void get_drives(std::vector<Drive_item>& drive_items);
 void get_files(const std::wstring& directory, std::vector<File_item>& file_items);
 Version_info get_file_info_version(const std::wstring& file_name);

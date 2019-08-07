@@ -3,8 +3,8 @@
 #include <vector>
 #include "wstring.h"
 #include "nullfunction.h"
-#include "get_drives_worker.h"
-#include "drive_item.h"
+#include "get_conflicts_worker.h"
+#include "conflict_item.h"
 #if WINDOWS
 #include "windows/utils.h"
 #include "windows/get_conflicts.h"
@@ -34,7 +34,7 @@ private:
     wstring targetPath;
     vector<wstring> items;
     Promise::Deferred deferred;
-    vector<std::shared_ptr<Conflict>> conflicts;
+    vector<Conflict_item> conflicts;
 };
 
 void Get_conflicts_worker::OnOK() {
