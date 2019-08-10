@@ -24,6 +24,7 @@ void get_conflicts(const wstring& sourcePath, const wstring& targetPath, const w
             FindClose(ret);
         } else {
             // TODO: if exe or dll, retrieve version info
+            // TODO: Exception when error
             conflicts.emplace_back(Conflict_item {
                 combine_path(subPath, sourceInfo.cFileName),
                 static_cast<uint64_t>(sourceInfo.nFileSizeHigh) << 32 | sourceInfo.nFileSizeLow,

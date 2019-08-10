@@ -40,21 +40,26 @@ private:
 void Get_conflicts_worker::OnOK() {
     HandleScope scope(Env());
 
-    // auto array = Array::New(Env(), drives.size());
-    // int i{0};
-    // for(auto item: drives) {
-    //     auto obj = Object::New(Env());
+    auto array = Array::New(Env(), conflicts.size());
+    int i{0};
+    for (auto item: conflicts) {
+        auto obj = Object::New(Env());
 
-    //     obj.Set("name", WString::New(Env(), item.name));
-    //     obj.Set("description", WString::New(Env(), item.description));
-    //     obj.Set("size", Number::New(Env(), static_cast<double>(item.size)));
-    //     obj.Set("type", Number::New(Env(), static_cast<double>(item.type)));
-    //     obj.Set("isMounted", Boolean::New(Env(), item.is_mounted));
+        obj.Set("name", WString::New(Env(), item.name));
+        
+        obj.Set("sourceSize", Number::New(Env(), static_cast<double>(item.source_size)));
+        napi_value time;
+        napi_create_date(Env(), static_cast<double>(item.source_time), &time);
+        obj.Set("sourceTime", time);
 
-    //     array.Set(i++, obj);
-    // }
+        obj.Set("targetSize", Number::New(Env(), static_cast<double>(item.target_size)));
+        napi_create_date(Env(), static_cast<double>(item.target_time), &time);
+        obj.Set("targetTime", time);
+        
+        array.Set(i++, obj);
+    }
 
-    // deferred.Resolve(array);
+    deferred.Resolve(array);
 }
 
 Value GetConflicts(const CallbackInfo& info) {
