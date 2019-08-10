@@ -24,12 +24,19 @@ wstring join(const vector<wstring>& arr, wchar_t delim) {
     return move(result);
 }
 
-int findString(const wstring &text, const wstring& searchText) {
+int findString(wstring const& text, wstring const& searchText) {
     auto it = search(text.begin(), text.end(),
         searchText.begin(), searchText.end(),
         [](auto ch1, auto ch2) { return toupper(ch1) == toupper(ch2); }
     );
 	auto pos = static_cast<int>(it - text.begin());
 	return pos < text.length() ? pos : -1;
+}
+
+bool ends_with(wstring const& value, wstring const& ending)
+{
+    if (ending.size() > value.size())
+        return false;
+    return equal(ending.rbegin(), ending.rend(), value.rbegin(), [](wchar_t a, wchar_t b){ return tolower(a) == tolower(b); });
 }
 

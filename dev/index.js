@@ -3,7 +3,7 @@ const addon = require('bindings')('extension-fs')
 const run = async () => {
 
 
-    const result = await addon.getConflicts("C:\\Users\\urieg\\Sources\\test\\test1", "C:\\Users\\urieg\\Sources\\test\\test2", ["2019", "dartdoc_options.yaml", "flutter_console.bat"])
+    const result = await addon.getConflicts("C:\\Users\\urieg\\Sources\\test\\test1", "C:\\Users\\urieg\\Sources\\test\\test2", ["2019", "dartdoc_options.yaml", "wabmig.exe", "flutter_console.bat"])
 
     const f1 = await addon.getExifDate("A:\\Bilder\\2017\\Abu Dabbab\\M0015912.JPG")
     const f2 = await addon.getExifDate("A:\\Bilder\\1968-1969\\GummiReiff.jpg")

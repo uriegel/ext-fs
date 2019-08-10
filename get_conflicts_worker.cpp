@@ -51,10 +51,26 @@ void Get_conflicts_worker::OnOK() {
         napi_value time;
         napi_create_date(Env(), static_cast<double>(item.source_time), &time);
         obj.Set("sourceTime", time);
+        if (item.source_version.build || item.source_version.major || item.source_version.minor || item.source_version.patch) {
+            auto versionObj = Object::New(Env());
+            versionObj.Set("major", Number::New(Env(), static_cast<double>(item.source_version.major)));
+            versionObj.Set("minor", Number::New(Env(), static_cast<double>(item.source_version.minor)));
+            versionObj.Set("build", Number::New(Env(), static_cast<double>(item.source_version.build)));
+            versionObj.Set("patch", Number::New(Env(), static_cast<double>(item.source_version.patch)));
+            obj.Set("sourceVersion", versionObj);
+        }
 
         obj.Set("targetSize", Number::New(Env(), static_cast<double>(item.target_size)));
         napi_create_date(Env(), static_cast<double>(item.target_time), &time);
         obj.Set("targetTime", time);
+        if (item.target_version.build || item.target_version.major || item.target_version.minor || item.target_version.patch) {
+            auto versionObj = Object::New(Env());
+            versionObj.Set("major", Number::New(Env(), static_cast<double>(item.target_version.major)));
+            versionObj.Set("minor", Number::New(Env(), static_cast<double>(item.target_version.minor)));
+            versionObj.Set("build", Number::New(Env(), static_cast<double>(item.target_version.build)));
+            versionObj.Set("patch", Number::New(Env(), static_cast<double>(item.target_version.patch)));
+            obj.Set("targetVersion", versionObj);
+        }
         
         array.Set(i++, obj);
     }

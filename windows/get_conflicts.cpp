@@ -3,6 +3,7 @@
 #include <vector>
 #include "get_conflicts.h"
 #include "utils.h"
+#include "../std_utils.h"
 using namespace std;
 
 void get_conflicts(const wstring& sourcePath, const wstring& targetPath, const wstring& subPath, 
@@ -23,16 +24,22 @@ void get_conflicts(const wstring& sourcePath, const wstring& targetPath, const w
             }
             FindClose(ret);
         } else {
-            // TODO: if exe or dll, retrieve version info
+            Version_info source_version{0};
+            Version_info target_version{0};
+            if (ends_with(path, L"exe") || ends_with(path, L"dll")) {
+                auto sourceFile = combine_path(sourcePath, subPath + L"\\" + sourceInfo.cFileName);
+                source_version = get_file_info_version(sourceFile);
+                target_version = get_file_info_version(path);
+            }
             // TODO: Exception when error
             conflicts.emplace_back(Conflict_item {
                 combine_path(subPath, sourceInfo.cFileName),
                 static_cast<uint64_t>(sourceInfo.nFileSizeHigh) << 32 | sourceInfo.nFileSizeLow,
                 convert_windowstime_to_unixtime(sourceInfo.ftLastWriteTime),
-                {0},
+                source_version,
                 static_cast<uint64_t>(targetInfo.nFileSizeHigh) << 32 | targetInfo.nFileSizeLow,
                 convert_windowstime_to_unixtime(targetInfo.ftLastWriteTime),
-                {0}
+                target_version
             });
         }
     }

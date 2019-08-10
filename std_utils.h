@@ -18,3 +18,5 @@ inline std::wstring utf82ws(const std::string &input) {
 	std::wstring_convert<std::codecvt_utf8<wchar_t>> utf8conv;
 	return utf8conv.from_bytes(input);
 }
+
+bool ends_with(std::wstring const& value, std::wstring const& ending);
