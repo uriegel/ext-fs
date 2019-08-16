@@ -34,10 +34,16 @@
         },            
         'conditions': [
             ['OS=="win"', {
-                'defines': ['WINDOWS'],
+                'defines': [
+                    'WINDOWS', 
+                    '_SILENCE_CXX17_CODECVT_HEADER_DEPRECATION_WARNING' 
+                ],
                 "msvs_settings": {
                     "VCCLCompilerTool": {
-                        "ExceptionHandling": 1
+                        "ExceptionHandling": 1,
+    					'AdditionalOptions': [
+						    '-std:c++17',
+						]
                     }
                 }                
             }],

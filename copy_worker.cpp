@@ -14,16 +14,18 @@ using namespace std;
 
 class Copy_worker : public AsyncWorker {
 public:
-    Copy_worker(const Napi::Env& env, const vector<wstring>& files, const wstring& target, bool move, bool no_ui)
+    Copy_worker(const Napi::Env& env, const wstring& source_path, const wstring& target_path, const vector<wstring>& files,
+        const vector<wstring>& exceptions, bool move)
     : AsyncWorker(Function::New(env, NullFunction, "theFunction"))
+    , source_path(source_path)
+    , target_path(target_path)
     , files(files)
-    , target(target)
+    , exceptions(exceptions)
     , move(move)
-    , no_ui(no_ui)
     , deferred(Promise::Deferred::New(Env())) {}
     ~Copy_worker() {}
 
-    void Execute () { copy_files(files, target, move, no_ui, error, error_code); }
+    void Execute () { copy_files(source_path, target_path, files, exceptions, move, error, error_code); }
 
     void OnOK() {
         HandleScope scope(Env());
@@ -40,23 +42,28 @@ public:
     Promise Promise() { return deferred.Promise(); }
 
 private:
+    wstring source_path;
+    wstring target_path;
     vector<wstring> files;
-    wstring target;
+    vector<wstring> exceptions;
     bool move;
-    bool no_ui;
     string error;
     int error_code;
     Promise::Deferred deferred;
 };
 
 Value copy_files(const CallbackInfo& info, bool move) {
-    auto files_array = info[0].As<Array>();
+    auto source_path = info[0].As<WString>();
+    auto target_path = info[1].As<WString>();
+    auto files_array = info[2].As<Array>();
     vector<wstring> files;
     for (auto i = 0U; i < files_array.Length(); i++) 
         files.push_back(files_array.Get(i).As<WString>());
-    auto target = info[1].As<WString>();
-    auto no_ui = info[2].As<Boolean>();
-    auto worker = new Copy_worker(info.Env(), files, target, move, no_ui);
+    auto exceptions_array = info[3].As<Array>();
+    vector<wstring> exceptions;
+    for (auto i = 0U; i < exceptions_array.Length(); i++) 
+        exceptions.push_back(exceptions_array.Get(i).As<WString>());
+    auto worker = new Copy_worker(info.Env(), source_path, target_path, files, exceptions, move);
     worker->Queue();
     return worker->Promise();
 }

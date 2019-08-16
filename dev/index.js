@@ -5,12 +5,17 @@ const run = async () => {
 
     const result = await addon.getConflicts("C:\\Users\\urieg\\Sources\\test\\test1", "C:\\Users\\urieg\\Sources\\test\\test2", ["2019", "dartdoc_options.yaml", "wabmig.exe", "flutter_console.bat"])
 
-    const f1 = await addon.getExifDate("A:\\Bilder\\2017\\Abu Dabbab\\M0015912.JPG")
-    const f2 = await addon.getExifDate("A:\\Bilder\\1968-1969\\GummiReiff.jpg")
-    const f3 = await addon.getExifDate("C:\\Users\\urieg\\Desktop\\Affe\\1968.jpg")
+    // const f1 = await addon.getExifDate("A:\\Bilder\\2017\\Abu Dabbab\\M0015912.JPG")
+    // const f2 = await addon.getExifDate("A:\\Bilder\\1968-1969\\GummiReiff.jpg")
+    // const f3 = await addon.getExifDate("C:\\Users\\urieg\\Desktop\\Affe\\1968.jpg")
     
-    
+    // TODO: Version 2.0.0
+    // TODO copyFiles(sourcePath, targetPaths, items, exceptions)
 
+    addon.copyFiles("C:\\Users\\urieg\\Sources\\test\\Test1", "C:\\Users\\urieg\\Sources\\test\\Test2",
+        //[ "Sub" ], [ "Sub\\SubSub\\Text1.txt", "Sub\\SubSub\\Text2.txt", "Sub\\text.txt" ])
+        [ "Sub" ], [ "Sub\\SubSub\\Text2.txt" ])
+    (copyItems.items, copyItems.targetPath, false)
     
 
     const path = "A:/Bilder/2017/Abu Dabbab"
@@ -109,10 +114,10 @@ const run = async () => {
 }
 run()
 
-addon.showInfo("C:\\Program Files\\nodejs\\node.exe")
-addon.open("C:\\Windows\\notepad.exe")
-addon.open("C:\\Windows\\system.ini")
-addon.openAs("C:\\Windows\\system.ini")
+// addon.showInfo("C:\\Program Files\\nodejs\\node.exe")
+// addon.open("C:\\Windows\\notepad.exe")
+// addon.open("C:\\Windows\\system.ini")
+// addon.openAs("C:\\Windows\\system.ini")
 
 let i = 1
 
