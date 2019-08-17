@@ -37,7 +37,7 @@ void Get_icon_worker::OnOK() {
     HandleScope scope(env);
 
     auto speicher = new vector<char>(move(icon_bytes));
-    auto buffer = Buffer<char>::New(env, speicher->data(), speicher->size(), [](Napi::Env env, char* data, vector<char>* to_delete){ delete to_delete; });
+    auto buffer = Buffer<char>::New(env, speicher->data(), speicher->size(), [](Napi::Env env, char* data, vector<char>* to_delete){ delete to_delete; }, speicher);
     deferred.Resolve(buffer);
 }
 
