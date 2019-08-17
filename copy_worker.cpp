@@ -59,10 +59,12 @@ Value copy_files(const CallbackInfo& info, bool move) {
     vector<wstring> files;
     for (auto i = 0U; i < files_array.Length(); i++) 
         files.push_back(files_array.Get(i).As<WString>());
-    auto exceptions_array = info[3].As<Array>();
     vector<wstring> exceptions;
-    for (auto i = 0U; i < exceptions_array.Length(); i++) 
-        exceptions.push_back(exceptions_array.Get(i).As<WString>());
+    if (info[3].IsArray()) {
+        auto exceptions_array = info[3].As<Array>();
+        for (auto i = 0U; i < exceptions_array.Length(); i++) 
+            exceptions.push_back(exceptions_array.Get(i).As<WString>());
+    }
     auto worker = new Copy_worker(info.Env(), source_path, target_path, files, exceptions, move);
     worker->Queue();
     return worker->Promise();

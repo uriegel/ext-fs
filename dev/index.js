@@ -14,7 +14,8 @@ const run = async () => {
 
     addon.copyFiles("C:\\Users\\urieg\\Sources\\test\\Test1", "C:\\Users\\urieg\\Sources\\test\\Test2",
         //[ "Sub" ], [ "Sub\\SubSub\\Text1.txt", "Sub\\SubSub\\Text2.txt", "Sub\\text.txt" ])
-        [ "Sub" ], [ "Sub\\SubSub\\Text2.txt" ])
+        //[ "Sub" ], [ "Sub\\SubSub\\Text2.txt" ])
+        [ "Sub" ], undefined)
     //(copyItems.items, copyItems.targetPath, false)
     
 
