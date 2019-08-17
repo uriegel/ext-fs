@@ -36,7 +36,7 @@ void Get_icon_worker::OnOK() {
     auto env = Env();
     HandleScope scope(env);
 
-    auto buffer = Buffer<char>::New(env, icon_bytes.data(), icon_bytes.size());
+    auto buffer = Buffer<char>::New(env, icon_bytes.data(), icon_bytes.size(), [this](Napi::Env env, char* data){});
     deferred.Resolve(buffer);
 }
 
