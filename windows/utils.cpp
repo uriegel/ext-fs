@@ -63,13 +63,14 @@ bool is_mounted(const file_handle& volume) {
 	return result != 0;
 }
 
-void get_drives(vector<Drive_item>& drive_items) {
+vector<Drive_item> get_drives() {
   	array<wchar_t, 500> buffer;
 	auto size = GetLogicalDriveStringsW(static_cast<DWORD>(buffer.size()), buffer.data());
 	const wstring drive_string(buffer.data(), size);
 	auto drives = split(drive_string, 0);
 
-	transform(drives.begin(), drives.end(), back_inserter(drive_items), [](const wstring & val) {
+	vector<Drive_item> result;
+	transform(drives.begin(), drives.end(), back_inserter(result), [](const wstring & val) {
 		auto type = GetDriveTypeW(val.c_str());
 		auto volume = wstring{ L"\\\\.\\" + val.substr(0, 2) };
 		file_handle volume_handle(CreateFileW(volume.c_str(), GENERIC_READ, FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE,
@@ -88,18 +89,20 @@ void get_drives(vector<Drive_item>& drive_items) {
 	// 	return !val.is_mounted;
 	// 	});
 	// drive_items.erase(erase_it, drive_items.end());
+	return result;
 }
 
-void get_files(const wstring& directory, vector<File_item>& file_items) {
+vector<File_item> get_files(const wstring& directory) {
     auto search_string = (directory[directory.length()-1] == L'\\' || directory[directory.length()-1] == L'/') 
         ? directory + L"*.*"s
         : directory + L"\\*.*"s;
     replace(search_string.begin(), search_string.end(), L'/', L'\\'); 
 
+	vector<File_item> result;
     WIN32_FIND_DATAW w32fd{ 0 };
     auto ret = FindFirstFileW(search_string.c_str(), &w32fd);
     while (FindNextFileW(ret, &w32fd) == TRUE) {
-        file_items.emplace_back(File_item {
+        result.emplace_back(File_item {
             w32fd.cFileName,
             (w32fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) == FILE_ATTRIBUTE_DIRECTORY,
             (w32fd.dwFileAttributes & FILE_ATTRIBUTE_HIDDEN) == FILE_ATTRIBUTE_HIDDEN,
@@ -108,6 +111,7 @@ void get_files(const wstring& directory, vector<File_item>& file_items) {
         });
     }
 	FindClose(ret);
+	return result;
 }
 
 Version_info get_file_info_version(const wstring& file_name) {

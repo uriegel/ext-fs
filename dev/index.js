@@ -15,7 +15,7 @@ const run = async () => {
     addon.copyFiles("C:\\Users\\urieg\\Sources\\test\\Test1", "C:\\Users\\urieg\\Sources\\test\\Test2",
         //[ "Sub" ], [ "Sub\\SubSub\\Text1.txt", "Sub\\SubSub\\Text2.txt", "Sub\\text.txt" ])
         [ "Sub" ], [ "Sub\\SubSub\\Text2.txt" ])
-    (copyItems.items, copyItems.targetPath, false)
+    //(copyItems.items, copyItems.targetPath, false)
     
 
     const path = "A:/Bilder/2017/Abu Dabbab"
@@ -87,6 +87,11 @@ const run = async () => {
     let icon = await addon.getIcon(".exe")
     diff = process.hrtime(hrstart)
     console.info(`Execution time geticon .exe (hr): ${(diff[1] / 1000000.0)}`)
+
+    hrstart = process.hrtime()
+    icon = await addon.getIcon(".dll")
+    diff = process.hrtime(hrstart)
+    console.info(`Execution time geticon .dll (hr): ${(diff[1] / 1000000.0)}`)
 
     console.log("Finished")
 

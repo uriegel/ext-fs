@@ -15,7 +15,6 @@ CLSID get_encoder_clsid(const wstring& format);
 void gdiplus_initialize()
 {
 	GdiplusStartupInput gdiplus_startup_input;
-	gdiplus_token;
 	auto status = GdiplusStartup(&gdiplus_token, &gdiplus_startup_input, nullptr);
 
 	if (png_clsid.Data1 == 0)
@@ -29,33 +28,32 @@ void gdiplus_uninitialize() {
 class Memory_stream : public IStream
 {
 public:
-    Memory_stream(vector<char>* bytes) : bytes(bytes) {}
+    Memory_stream(vector<char>& bytes) : bytes(bytes) {}
 	virtual ~Memory_stream() {}
 	
 	virtual HRESULT __stdcall QueryInterface(REFIID iid,void **object);
-	virtual ULONG __stdcall AddRef();
-	virtual ULONG __stdcall Release();
+	virtual ULONG __stdcall AddRef() { return 1; }
+	virtual ULONG __stdcall Release() { return 0; }
 
-	virtual HRESULT __stdcall Read(void *pv, ULONG cb, ULONG *pcbRead);
-	virtual HRESULT __stdcall Write(const void *pv, ULONG cb, ULONG *pcbWritten);
+	virtual HRESULT __stdcall Read(void *pv, ULONG cb, ULONG *pcbRead) { return E_NOTIMPL; }
+	virtual HRESULT __stdcall Write(const void *pv, ULONG cb, ULONG *written);
 
-	virtual HRESULT __stdcall Seek(LARGE_INTEGER dlibMove, DWORD dwOrigin, ULARGE_INTEGER *plibNewPosition);
-	virtual HRESULT __stdcall SetSize(ULARGE_INTEGER libNewSize);
+	virtual HRESULT __stdcall Seek(LARGE_INTEGER dlibMove, DWORD dwOrigin, ULARGE_INTEGER *plibNewPosition) { return E_NOTIMPL; }
+	virtual HRESULT __stdcall SetSize(ULARGE_INTEGER libNewSize) { return E_NOTIMPL; }
 
-	virtual HRESULT __stdcall CopyTo(IStream *pstm, ULARGE_INTEGER cb, ULARGE_INTEGER *pcbRead, ULARGE_INTEGER *pcbWritten);
-	virtual HRESULT __stdcall Commit(DWORD grfCommitFlags);
-	virtual HRESULT __stdcall Revert();
-	virtual HRESULT __stdcall LockRegion(ULARGE_INTEGER libOffset, ULARGE_INTEGER cb, DWORD dwLockType);
-	virtual HRESULT __stdcall UnlockRegion(ULARGE_INTEGER libOffset, ULARGE_INTEGER cb, DWORD dwLockType);
-	virtual HRESULT __stdcall Stat(STATSTG *pstatstg, DWORD grfStatFlag);
-	virtual HRESULT __stdcall Clone(IStream **ppstm);
+	virtual HRESULT __stdcall CopyTo(IStream *pstm, ULARGE_INTEGER cb, ULARGE_INTEGER *pcbRead, ULARGE_INTEGER *written) { return E_NOTIMPL; }
+	virtual HRESULT __stdcall Commit(DWORD grfCommitFlags) { return E_NOTIMPL; }
+	virtual HRESULT __stdcall Revert() { return E_NOTIMPL; }
+	virtual HRESULT __stdcall LockRegion(ULARGE_INTEGER libOffset, ULARGE_INTEGER cb, DWORD dwLockType) { return E_NOTIMPL; }
+	virtual HRESULT __stdcall UnlockRegion(ULARGE_INTEGER libOffset, ULARGE_INTEGER cb, DWORD dwLockType) { return E_NOTIMPL; }
+	virtual HRESULT __stdcall Stat(STATSTG *pstatstg, DWORD grfStatFlag) { return E_NOTIMPL; }
+	virtual HRESULT __stdcall Clone(IStream **ppstm) { return E_NOTIMPL; }
 
 private:
-	vector<char>* bytes;
+	vector<char>& bytes;
 };
 
-void extract_icon(wstring icon_path, vector<char>* iconBytes) {
-
+vector<char> extract_icon(wstring icon_path) {
     replace(icon_path.begin(), icon_path.end(), L'/', L'\\'); 
     if (icon_path.find(L"\\") == string::npos) {
         // no executable path, is extension
@@ -128,16 +126,19 @@ void extract_icon(wstring icon_path, vector<char>* iconBytes) {
 	// Create GDI+ Bitmap
 	auto bmp = make_unique<Bitmap>(bm.bmWidth, bm.bmHeight, bm.bmWidth * 4, PixelFormat32bppARGB, reinterpret_cast<BYTE*>(pixels.data()));
 
-	Memory_stream ms(iconBytes);
+	vector<char> result;
+	Memory_stream ms(result);
 	bmp->Save(&ms, &png_clsid);
 	DestroyIcon(icon);
+	return result;
 }
 
-void get_icon(const wstring& extension, vector<char>* iconBytes) {
+vector<char> get_icon(const wstring& extension) {
     gdiplus_initialize();
 
-    extract_icon(extension, iconBytes); 
+    auto result = extract_icon(extension); 
     gdiplus_uninitialize();
+	return result;
 }
 
 CLSID get_encoder_clsid(const wstring& format)
@@ -157,8 +158,7 @@ CLSID get_encoder_clsid(const wstring& format)
 	return { 0 };
 }
 
-HRESULT __stdcall Memory_stream::QueryInterface(REFIID iid, void **object)
-{
+HRESULT __stdcall Memory_stream::QueryInterface(REFIID iid, void **object) {
 	if (iid == IID_IUnknown) {
 		*object = static_cast<IUnknown*>(this);
 		return S_OK;
@@ -177,68 +177,10 @@ HRESULT __stdcall Memory_stream::QueryInterface(REFIID iid, void **object)
 	}
 }
 
-ULONG __stdcall Memory_stream::AddRef()
-{
-	return 1;
-}
-ULONG __stdcall Memory_stream::Release()
-{
-	return 0;
-}
-
-HRESULT __stdcall Memory_stream::Read(void *pv, ULONG cb, ULONG *pcbRead)
-{
-	return E_NOTIMPL;
-}
-HRESULT __stdcall Memory_stream::Write(const void *pv, ULONG cb, ULONG *pcbWritten)
-{
+HRESULT __stdcall Memory_stream::Write(const void *pv, ULONG cb, ULONG *written) {
 	auto bs = reinterpret_cast<const char*>(pv);
-	copy(bs, bs + cb, back_inserter(*bytes));
-	*pcbWritten = cb;
+	copy(bs, bs + cb, back_inserter(bytes));
+	*written = cb;
 	return S_OK;
 }
 
-HRESULT __stdcall Memory_stream::Seek(LARGE_INTEGER dlibMove, DWORD dwOrigin, ULARGE_INTEGER *plibNewPosition)
-{
-	return E_NOTIMPL;
-}
-
-HRESULT __stdcall Memory_stream::SetSize(ULARGE_INTEGER libNewSize)
-{
-	return E_NOTIMPL;
-}
-
-HRESULT __stdcall Memory_stream::CopyTo(IStream *pstm, ULARGE_INTEGER cb, ULARGE_INTEGER *pcbRead, ULARGE_INTEGER *pcbWritten)
-{
-	return E_NOTIMPL;
-}
-
-HRESULT __stdcall Memory_stream::Commit(DWORD grfCommitFlags)
-{
-	return E_NOTIMPL;
-}
-
-HRESULT __stdcall Memory_stream::Revert()
-{
-	return E_NOTIMPL;
-}
-
-HRESULT __stdcall Memory_stream::LockRegion(ULARGE_INTEGER libOffset, ULARGE_INTEGER cb, DWORD dwLockType)
-{
-	return E_NOTIMPL;
-}
-
-HRESULT __stdcall Memory_stream::UnlockRegion(ULARGE_INTEGER libOffset, ULARGE_INTEGER cb, DWORD dwLockType)
-{
-	return E_NOTIMPL;
-}
-
-HRESULT __stdcall Memory_stream::Stat(STATSTG *pstatstg, DWORD grfStatFlag)
-{
-	return E_NOTIMPL;
-}
-
-HRESULT __stdcall Memory_stream::Clone(IStream **ppstm)
-{
-	return E_NOTIMPL;
-}

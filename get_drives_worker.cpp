@@ -19,7 +19,7 @@ public:
     , deferred(Promise::Deferred::New(Env())) {}
     ~Get_drives_worker() {}
 
-    void Execute () { get_drives(drives); }
+    void Execute () { drives = move(get_drives()); }
 
     void OnOK();
 

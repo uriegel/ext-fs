@@ -20,10 +20,7 @@ public:
     , deferred(Promise::Deferred::New(Env())) {}
     ~Get_icon_worker() {}
 
-    void Execute () {
-        iconBytes = new vector<char>();
-        get_icon(extension, iconBytes);
-    }
+    void Execute () { icon_bytes = move(get_icon(extension)); }
 
     void OnOK();
 
@@ -32,18 +29,14 @@ public:
 private:
     Promise::Deferred deferred;
     wstring extension;
-    vector<char>* iconBytes{nullptr};
+    vector<char> icon_bytes;
 };
-
-void finalizer(Env env, char* data, vector<char>* hint) {
-    delete hint;
-}
 
 void Get_icon_worker::OnOK() {
     auto env = Env();
     HandleScope scope(env);
 
-    auto buffer = Buffer<char>::New(env, iconBytes->data(), iconBytes->size(), finalizer, iconBytes);
+    auto buffer = Buffer<char>::New(env, icon_bytes.data(), icon_bytes.size());
     deferred.Resolve(buffer);
 }
 

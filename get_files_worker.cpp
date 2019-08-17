@@ -20,7 +20,7 @@ public:
     , deferred(Promise::Deferred::New(Env())) {}
     ~Get_files_worker() {}
 
-    void Execute () { get_files(directory, files); }
+    void Execute () { files = move(get_files(directory)); }
 
     void OnOK();
 
