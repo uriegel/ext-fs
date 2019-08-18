@@ -137,7 +137,7 @@ void delete_files(const vector<wstring>& files, string& error, int& error_code) 
 
 void resolve_item(const wstring& source_path, const wstring& target_path, const wstring& sub_path, 
                     const WIN32_FIND_DATAW& source_info, 
-                    vector<wstring>::const_iterator& exception, vector<wstring>::const_iterator& exception_end,
+                    vector<wstring>::const_iterator& exception, const vector<wstring>::const_iterator& exception_end,
                     vector<wstring>& source_items, vector<wstring>& target_items) {
     auto is_dir = (source_info.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) == FILE_ATTRIBUTE_DIRECTORY;
     auto path = combine_path(source_path, sub_path + L"\\" + source_info.cFileName);
@@ -169,11 +169,13 @@ void resolve_item(const wstring& source_path, const wstring& target_path, const 
 auto resolve_items(wstring source_path, wstring target_path, const vector<wstring>& files, const vector<wstring>& exceptions) {
     vector<wstring> source_items;
     vector<wstring> target_items;
+    auto exception_it = exceptions.cbegin();
+    const auto exception_end = exceptions.cend();
     for (auto it = files.cbegin(); it < files.cend(); it++) {
         auto path = combine_path(source_path, *it);
         WIN32_FIND_DATAW w32fd{ 0 };
         auto ret = FindFirstFileW(path.c_str(), &w32fd);
-        resolve_item(source_path, target_path, L"", w32fd, exceptions.cbegin(), exceptions.cend(), source_items, target_items);
+        resolve_item(source_path, target_path, L"", w32fd, exception_it, exception_end, source_items, target_items);
         FindClose(ret);
     }
     return tuple(source_items, target_items);

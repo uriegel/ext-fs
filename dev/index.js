@@ -12,12 +12,18 @@ const run = async () => {
     // TODO: Version 2.0.0
     // TODO copyFiles(sourcePath, targetPaths, items, exceptions)
 
-    addon.copyFiles("C:\\Users\\urieg\\Sources\\test\\Test1", "C:\\Users\\urieg\\Sources\\test\\Test2",
-        //[ "Sub" ], [ "Sub\\SubSub\\Text1.txt", "Sub\\SubSub\\Text2.txt", "Sub\\text.txt" ])
-        //[ "Sub" ], [ "Sub\\SubSub\\Text2.txt" ])
-        [ "Sub" ], undefined)
-    //(copyItems.items, copyItems.targetPath, false)
+    // addon.copyFiles("C:\\Users\\urieg\\Sources\\test\\Test1", "C:\\Users\\urieg\\Sources\\test\\Test2",
+    //     [ "Sub" ], [ "Sub\\SubSub\\Text1.txt", "Sub\\SubSub\\Text2.txt", "Sub\\text.txt" ])
+    //     //[ "Sub" ], [ "Sub\\SubSub\\Text2.txt" ])
+    //     //[ "Sub" ], undefined)
+    // //(copyItems.items, copyItems.targetPath, false)
     
+
+    addon.copyFiles("C:\\Users\\urieg\\Sources\\test\\Test1\\Sub", "C:\\Users\\urieg\\Sources\\test\\Test3\\Sub",
+    [ "Text.txt", "SubSub" ], ["text.txt", "SubSub\\Text1.txt", "SubSub\\Text2.txt"])
+    //[ "Sub" ], [ "Sub\\SubSub\\Text2.txt" ])
+    //[ "Sub" ], undefined)
+
 
     const path = "A:/Bilder/2017/Abu Dabbab"
     let exifFiles = await addon.getFiles(path)
