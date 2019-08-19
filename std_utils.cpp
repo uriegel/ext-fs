@@ -11,7 +11,7 @@ const vector<wstring> split(const wstring& s, wchar_t delim) {
 	while (getline(wss, item, delim))
 		elems.push_back(item);
 
-	return move(elems);
+	return elems;
 }
 
 wstring join(const vector<wstring>& arr, wchar_t delim) {
@@ -21,7 +21,7 @@ wstring join(const vector<wstring>& arr, wchar_t delim) {
             result += delim;
         result.append(*it);
     }
-    return move(result);
+    return result;
 }
 
 int findString(wstring const& text, wstring const& searchText) {

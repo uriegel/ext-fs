@@ -102,13 +102,13 @@ vector<File_item> get_files(const wstring& directory) {
     WIN32_FIND_DATAW w32fd{ 0 };
     auto ret = FindFirstFileW(search_string.c_str(), &w32fd);
     while (FindNextFileW(ret, &w32fd) == TRUE) {
-        result.emplace_back(File_item {
+        result.emplace_back(
             w32fd.cFileName,
             (w32fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) == FILE_ATTRIBUTE_DIRECTORY,
             (w32fd.dwFileAttributes & FILE_ATTRIBUTE_HIDDEN) == FILE_ATTRIBUTE_HIDDEN,
             static_cast<uint64_t>(w32fd.nFileSizeHigh) << 32 | w32fd.nFileSizeLow,
             convert_windowstime_to_unixtime(w32fd.ftLastWriteTime)
-        });
+        );
     }
 	FindClose(ret);
 	return result;

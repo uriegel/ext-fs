@@ -32,7 +32,7 @@ void get_conflicts(const wstring& source_path, const wstring& target_path, const
                 target_version = get_file_info_version(path);
             }
             // TODO: Exception when error
-            conflicts.emplace_back(Conflict_item {
+            conflicts.emplace_back(
                 combine_path(sub_path, source_info.cFileName),
                 static_cast<uint64_t>(source_info.nFileSizeHigh) << 32 | source_info.nFileSizeLow,
                 convert_windowstime_to_unixtime(source_info.ftLastWriteTime),
@@ -40,7 +40,7 @@ void get_conflicts(const wstring& source_path, const wstring& target_path, const
                 static_cast<uint64_t>(targetInfo.nFileSizeHigh) << 32 | targetInfo.nFileSizeLow,
                 convert_windowstime_to_unixtime(targetInfo.ftLastWriteTime),
                 target_version
-            });
+            );
         }
     }
 }
