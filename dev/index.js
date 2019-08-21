@@ -63,66 +63,66 @@ const run = async () => {
     }
     
 
-    let hrstart = process.hrtime()
+    let start = process.hrtime.bigint()
     for (let i = 0; i < 1000; i++) {
         let exifDatum = await addon.getExifDate("A:\\Bilder\\2015\\Canon\\IMG_8420.JPG")
     }
-    let diff = process.hrtime(hrstart)
-    console.info(`Execution time getExifDate (hr): ${(diff[1] / 1000000.0)}`)
+    let end = process.hrtime.bigint()
+    console.info(`Execution time getExifDate (hr): ${((hrend - hrstart) / BigInt(1000000.0))} ms`)
 
     let exifDatum = await addon.getExifDate("A:\\Bilder\\2015\\Canon\\IMG_8420.JPG")
     if (exifDatum)
         console.log(exifDatum)
 
-    hrstart = process.hrtime()
+    start = process.hrtime.bigint()
     drives = await addon.getDrives() 
-    diff = process.hrtime(hrstart)
-    console.info(`Execution time drives (hr): ${(diff[1] / 1000000.0)}`)
+    end = process.hrtime.bigint()
+    console.info(`Execution time drives (hr): ${((hrend - hrstart) / BigInt(1000000.0))} ms`)
     console.log(drives)
 
-    hrstart = process.hrtime()
+    start = process.hrtime.bigint()
     let files = await addon.getFiles("d:/Test😎😎😎")
-    diff = process.hrtime(hrstart)
-    console.info(`Execution time get files d:/test: ${(diff[1] / 1000000.0)}`)
+    end = process.hrtime.bigint()
+    console.info(`Execution time get files d:/test: ${((hrend - hrstart) / BigInt(1000000.0))} ms`)
     
-    hrstart = process.hrtime()
+    start = process.hrtime.bigint()
     files = await addon.getFiles("c:/windows/system32")
-    diff = process.hrtime(hrstart)
-    console.info(`Execution time files c:/windows/system32: ${(diff[1] / 1000000.0)}`)
+    end = process.hrtime.bigint()
+    console.info(`Execution time files c:/windows/system32: ${((hrend - hrstart) / BigInt(1000000.0))} ms`)
 
-    hrstart = process.hrtime()
+    start = process.hrtime.bigint()
     let icon = await addon.getIcon(".exe")
-    diff = process.hrtime(hrstart)
-    console.info(`Execution time geticon .exe (hr): ${(diff[1] / 1000000.0)}`)
+    end = process.hrtime.bigint()
+    console.info(`Execution time geticon .exe: ${((hrend - hrstart) / BigInt(1000000.0))} ms`)
 
-    hrstart = process.hrtime()
+    start = process.hrtime.bigint()
     icon = await addon.getIcon(".dll")
-    diff = process.hrtime(hrstart)
-    console.info(`Execution time geticon .dll (hr): ${(diff[1] / 1000000.0)}`)
+    end = process.hrtime.bigint()
+    console.info(`Execution time geticon .dll: ${((hrend - hrstart) / BigInt(1000000.0))} ms`)
 
     console.log("Finished")
 
-    hrstart = process.hrtime()
+    start = process.hrtime.bigint()
     let version = await addon.getFileVersion(`C:\\Program Files\\internet explorer\\iexplore.exe`)
-    diff = process.hrtime(hrstart)
-    console.info(`Execution getFileVersion: ${(diff[1] / 1000000.0)}`)
+    end = process.hrtime.bigint()
+    console.info(`Execution getFileVersion: ${((hrend - hrstart) / BigInt(1000000.0))} ms`)
 
-    hrstart = process.hrtime()
+    start = process.hrtime.bigint()
     files = await addon.getFiles("c:/windows/system32")
-    diff = process.hrtime(hrstart)
-    console.info(`Execution time files c:/windows/system32 (hr): ${(diff[1] / 1000000.0)}`)
+    end = process.hrtime.bigint()
+    console.info(`Execution c:/windows/system32: ${((hrend - hrstart) / BigInt(1000000.0))} ms`)
 
-    hrstart = process.hrtime()
+    start = process.hrtime.bigint()
     version = await addon.getFileVersion(`C:\\Program Files\\internet explorer\\iexplore.exe`)
-    diff = process.hrtime(hrstart)
-    console.info(`Execution getFileVersion: ${(diff[1] / 1000000.0)}`)
+    end = process.hrtime.bigint()
+    console.info(`Execution getFileVersion: ${((hrend - hrstart) / BigInt(1000000.0))} ms`)
 
-    hrstart = process.hrtime()
+    start = process.hrtime.bigint()
     files.forEach(async n => {
         const version = await addon.getFileVersion("c:\\windows\\system32\\" + n.name)
     })
-    diff = process.hrtime(hrstart)
-    console.info(`Execution time version iteration: ${(diff[1] / 1000000.0)}`)
+    end = process.hrtime.bigint()
+    console.info(`Execution time version iteration: ${((hrend - hrstart) / BigInt(1000000.0))} ms`)
 }
 run()
 
