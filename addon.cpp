@@ -1,5 +1,6 @@
 #define NAPI_EXPERIMENTAL
 #include <napi.h>
+#include <filesystem>
 #include "get_drives_worker.h"
 #include "get_files_worker.h"
 #include "get_icon_worker.h"
@@ -17,6 +18,7 @@
 #elif LINUX
 #endif
 using namespace Napi;
+using namespace std;
 
 #if WINDOWS
 Value ShowInfo(const CallbackInfo& info) {
@@ -35,6 +37,11 @@ Value OpenAs(const CallbackInfo& info) {
     auto file = info[0].As<WString>().WValue();
     open_as(file.c_str());
     return info.Env().Undefined();
+}
+
+Value ExistsFile(const CallbackInfo& info) {
+    auto file = info[0].As<WString>().WValue();
+    return Boolean::New(info.Env(), filesystem::exists(file));
 }
 
 #endif
@@ -57,6 +64,7 @@ Object Init(Env env, Object exports) {
     exports.Set(String::New(env, "deleteFiles"), Function::New(env, DeleteFiles));
     exports.Set(String::New(env, "copyFiles"), Function::New(env, CopyFiles));
     exports.Set(String::New(env, "moveFiles"), Function::New(env, MoveFiles));
+    exports.Set(String::New(env, "existsFile"), Function::New(env, ExistsFile));
 #endif        
     return exports;
 }

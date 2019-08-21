@@ -1,5 +1,8 @@
 const addon = require('bindings')('extension-fs')
 
+let exists = addon.existsFile("A:\\Bilder\\2017\\Abu Dabbab\\M0015912.JPG")
+exists = addon.existsFile("A:\\Bilder\\2017\\Abu Dabbab\\nichda.jpg")
+
 const run = async () => {
 
 
