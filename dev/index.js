@@ -5,6 +5,11 @@ exists = addon.existsFile("A:\\Bilder\\2017\\Abu Dabbab\\nichda.jpg")
 
 const run = async () => {
 
+    addon.copyFiles("C:\\Users\\uwe.CASERIS\\Pictures", "h:\\",
+    [ "Bild02.jpg" ], [])
+
+    addon.copyFiles("C:\\Users\\uwe.CASERIS\\Pictures", "h:\\weck",
+    [ "Bild02.jpg" ], [])
 
     const result = await addon.getConflicts("C:\\Users\\urieg\\Sources\\test\\test1", "C:\\Users\\urieg\\Sources\\test\\test2", ["2019", "dartdoc_options.yaml", "wabmig.exe", "flutter_console.bat"])
 

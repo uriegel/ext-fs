@@ -194,7 +194,7 @@ void copy_files(wstring source_path, wstring target_path, const vector<wstring>&
         files_buffer.append(L"A");
         files_buffer[files_buffer.length() - 1] = 0;
         op.pFrom = files_buffer.c_str();
-        target_path.append(L"\\A");
+        target_path.append(target_path[target_path.length()-1] == L'\\' ? L"A"  : L"\\A");
         target_path[target_path.length() - 1] = 0;
         op.pTo = target_path.c_str();
         op.fFlags = FOF_NOCONFIRMATION | FOF_NOCONFIRMMKDIR;
