@@ -29,7 +29,8 @@
     },
     "homepage": "https://github.com/uriegel/ext-fs#readme",
     "dependencies": {
-        "node-addon-api": "*",
-        "bindings": "*"
+        "bindings": "*",
+        "event-source-base": "^1.1.0",
+        "node-addon-api": "*"
     }
 }

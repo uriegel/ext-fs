@@ -20,6 +20,7 @@
             'windows/get_icon.cpp',
             'windows/shell.cpp',
             'windows/get_conflicts.cpp',
+            'windows/services.cpp',
         ],
         'include_dirs': ["<!@(node -p \"require('node-addon-api').include\")"],
         'dependencies': ["<!(node -p \"require('node-addon-api').gyp\")"],
