@@ -1,7 +1,8 @@
+#include "services.h"
 #include <Windows.h>
 #include <string>
+#include <thread>
 #include <vector>
-#include "services.h"
 #include "../wstring.h"
 using namespace std;
 using namespace Napi;
@@ -9,7 +10,9 @@ using namespace Napi;
 void Services::Init(Napi::Env& env, Object& exports) {
 
     Function ctor = DefineClass(env, "Services", {
-        InstanceMethod("get", &Get)
+        InstanceMethod("get", &get),
+        InstanceMethod("registerEvents", &register_events),
+        InstanceMethod("unregisterEvents", &unregister_events)
 //     InstanceAccessor("type", &Canvas::GetType, nullptr),
 //     InstanceValue("PNG_NO_FILTERS", Napi::Number::New(env, PNG_NO_FILTERS)),
 //     StaticMethod("_registerFont", &Canvas::RegisterFont),
@@ -40,23 +43,36 @@ vector<ENUM_SERVICE_STATUS_PROCESSW> access(vector<BYTE>& bytes, int number_of_s
          reinterpret_cast<ENUM_SERVICE_STATUS_PROCESSW*>(bytes.data()) + number_of_services);
 }
 
-Value Services::Get(const CallbackInfo &info) {
+auto Services::get(const CallbackInfo &info) -> Napi::Value {
     auto [bytes, count] = get_services();
     auto services = access(bytes, count);
 
     auto result = Array::New(info.Env(), services.size());
     int i{0};
-    for(auto item: services) {
-        auto obj = Object::New(Env());
+    for (auto item: services) {
+        auto obj = Object::New(info.Env());
 
-        obj.Set("name", WString::New(Env(), item.lpServiceName));
-        obj.Set("displayName", WString::New(Env(), item.lpDisplayName));
-        obj.Set("status", Number::New(Env(), item.ServiceStatusProcess.dwCurrentState));
+        obj.Set("name", WString::New(info.Env(), item.lpServiceName));
+        obj.Set("displayName", WString::New(info.Env(), item.lpDisplayName));
+        obj.Set("status", Number::New(info.Env(), item.ServiceStatusProcess.dwCurrentState));
 
         result.Set(i++, obj);
     }
 
     return result;
+}
+
+auto Services::register_events(const Napi::CallbackInfo &info) -> Napi::Value {
+    events = make_shared<Events>(info[0].As<Function>());
+    events->start();
+    return info.Env().Undefined();
+}
+
+auto Services::unregister_events(const Napi::CallbackInfo &info) -> Napi::Value {
+    if (events)
+        events->stop();
+    events = nullptr;
+    return Object::New(info.Env());
 }
 
 auto Services::get_services() -> tuple<vector<BYTE>, int> {
@@ -69,6 +85,28 @@ auto Services::get_services() -> tuple<vector<BYTE>, int> {
     EnumServicesStatusExW(handle, SC_ENUM_PROCESS_INFO, SERVICE_WIN32, SERVICE_STATE_ALL, 
         reinterpret_cast<BYTE*>(bytes.data()), byte_count, &byte_count, &number_of_services, &resume_handle, nullptr);
     return make_tuple(move(bytes), number_of_services);
+}
+
+void Services::Events::start() {
+    Initialize();
+    is_running = true;
+    thread thread([this] {
+        while (true) {
+            if (!is_running)
+                break;
+            // SendEvent();
+        }
+    });
+    thread.detach();        
+}
+
+void Services::Events::stop() {
+    is_running = false;
+    Dispose();
+}
+
+void Services::Events::OnEvent() { 
+
 }
 
 FunctionReference Services::constructor;

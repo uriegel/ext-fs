@@ -1,6 +1,7 @@
 #define NAPI_EXPERIMENTAL
 #include <napi.h>
 #include <filesystem>
+#include "windows/services.h"
 #include "get_drives_worker.h"
 #include "get_files_worker.h"
 #include "get_icon_worker.h"
@@ -15,7 +16,6 @@
 #if WINDOWS
 #include "windows/shell.h"
 #include "windows/utils.h"
-#include "windows/services.h"
 #elif LINUX
 #endif
 using namespace Napi;

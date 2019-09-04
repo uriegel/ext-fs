@@ -22,7 +22,10 @@
             'windows/get_conflicts.cpp',
             'windows/services.cpp',
         ],
-        'include_dirs': ["<!@(node -p \"require('node-addon-api').include\")"],
+        'include_dirs': [
+            "<!@(node -p \"require('node-addon-api').include\")",
+            "<!@(node -p \"var a = require('node-addon-api').include; var b = a.substr(0, a.length - 15); b + 'event-source-base' + a[a.length-1]\")"
+        ],
         'dependencies': ["<!(node -p \"require('node-addon-api').gyp\")"],
         "cflags": ["-Wall", "-std=c++17"],
         'cflags!': [ '-fno-exceptions' ],
