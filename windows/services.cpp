@@ -98,8 +98,10 @@ void Services::Events::start() {
             auto recent_service_items = access(services.services);
             if (new_service_items.size() != recent_service_items.size())
                 ; // TODO: throw javascript exception
+            vector<
             if (!equal(recent_service_items.cbegin(), recent_service_items.cend(), new_service_items.cbegin(), [](auto& i1, auto& i2) {
-                return true;
+                if (i1.ServiceStatusProcess.dwCurrentState != i2.ServiceStatusProcess.dwCurrentState)
+                return i1.ServiceStatusProcess.dwCurrentState == i2.ServiceStatusProcess.dwCurrentState;
             }))
                 SendEvent();
         }

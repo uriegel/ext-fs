@@ -10,6 +10,12 @@ const services = new Services(n => {
 })
 const items = services.get()
 console.log(items)
+
+setInterval(() => {
+    console.log("Hallo")
+    const a = services
+}, 2000)
+
 return
 
 const run = async () => {
