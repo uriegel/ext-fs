@@ -4,12 +4,17 @@ const Services = addon.Services
 let exists = addon.existsFile("A:\\Bilder\\2017\\Abu Dabbab\\M0015912.JPG")
 exists = addon.existsFile("A:\\Bilder\\2017\\Abu Dabbab\\nichda.jpg")
 
+
+const services = new Services(n => {
+    console.log("Event", n)
+})
+const items = services.get()
+console.log(items)
+return
+
 const run = async () => {
 
-    const services = new Services()
-    const items = services.get()
-    console.log(items)
-    return
+    
     addon.copyFiles("C:\\Users\\uwe.CASERIS\\Pictures", "h:\\",
     [ "Bild02.jpg" ], [])
 

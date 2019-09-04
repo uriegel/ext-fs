@@ -7,11 +7,22 @@
 using namespace std;
 using namespace Napi;
 
+auto get_services(SC_HANDLE handle) -> tuple<vector<unsigned char>, int> {
+    DWORD byte_count{0};
+    DWORD number_of_services{0};
+    DWORD resume_handle{0};
+    EnumServicesStatusExW(handle, SC_ENUM_PROCESS_INFO, SERVICE_WIN32, SERVICE_STATE_ALL, nullptr, 0, 
+        &byte_count, &number_of_services, &resume_handle, nullptr);
+    vector<BYTE> bytes(byte_count);
+    EnumServicesStatusExW(handle, SC_ENUM_PROCESS_INFO, SERVICE_WIN32, SERVICE_STATE_ALL, 
+        reinterpret_cast<BYTE*>(bytes.data()), byte_count, &byte_count, &number_of_services, &resume_handle, nullptr);
+    return make_tuple(move(bytes), number_of_services);
+}
+
 void Services::Init(Napi::Env& env, Object& exports) {
 
     Function ctor = DefineClass(env, "Services", {
         InstanceMethod("get", &get),
-        InstanceMethod("registerEvents", &register_events),
         InstanceMethod("unregisterEvents", &unregister_events)
 //     InstanceAccessor("type", &Canvas::GetType, nullptr),
 //     InstanceValue("PNG_NO_FILTERS", Napi::Number::New(env, PNG_NO_FILTERS)),
@@ -29,7 +40,9 @@ void Services::Init(Napi::Env& env, Object& exports) {
     exports.Set("Services", ctor);
 }
 
-Services::Services(const CallbackInfo& info) : ObjectWrap<Services>(info) {
+Services::Services(const CallbackInfo& info) 
+    : ObjectWrap<Services>(info)
+    , events(info[0].IsFunction() ? make_shared<Events>(*this, info[0].As<Function>()) : nullptr) {
     Napi::Env env = info.Env();
     handle = OpenSCManagerW(nullptr, nullptr, SC_MANAGER_ENUMERATE_SERVICE);
 }
@@ -38,18 +51,19 @@ Services::~Services() {
     CloseServiceHandle(handle);
 }
 
-vector<ENUM_SERVICE_STATUS_PROCESSW> access(vector<BYTE>& bytes, int number_of_services) {
+vector<ENUM_SERVICE_STATUS_PROCESSW> access(tuple<vector<unsigned char>, int>& mem) {
+    auto& [bytes, number_of_services] = mem;
     return vector<ENUM_SERVICE_STATUS_PROCESSW>(reinterpret_cast<ENUM_SERVICE_STATUS_PROCESSW*>(bytes.data()), 
          reinterpret_cast<ENUM_SERVICE_STATUS_PROCESSW*>(bytes.data()) + number_of_services);
 }
 
 auto Services::get(const CallbackInfo &info) -> Napi::Value {
-    auto [bytes, count] = get_services();
-    auto services = access(bytes, count);
+    services = get_services(handle);
+    auto service_items = access(services);
 
-    auto result = Array::New(info.Env(), services.size());
+    auto result = Array::New(info.Env(), service_items.size());
     int i{0};
-    for (auto item: services) {
+    for (auto item: service_items) {
         auto obj = Object::New(info.Env());
 
         obj.Set("name", WString::New(info.Env(), item.lpServiceName));
@@ -59,32 +73,16 @@ auto Services::get(const CallbackInfo &info) -> Napi::Value {
         result.Set(i++, obj);
     }
 
-    return result;
-}
+    if (events)
+        events->start();
 
-auto Services::register_events(const Napi::CallbackInfo &info) -> Napi::Value {
-    events = make_shared<Events>(info[0].As<Function>());
-    events->start();
-    return info.Env().Undefined();
+    return result;
 }
 
 auto Services::unregister_events(const Napi::CallbackInfo &info) -> Napi::Value {
     if (events)
         events->stop();
-    events = nullptr;
     return Object::New(info.Env());
-}
-
-auto Services::get_services() -> tuple<vector<BYTE>, int> {
-    DWORD byte_count{0};
-    DWORD number_of_services{0};
-    DWORD resume_handle{0};
-    EnumServicesStatusExW(handle, SC_ENUM_PROCESS_INFO, SERVICE_WIN32, SERVICE_STATE_ALL, nullptr, 0, 
-        &byte_count, &number_of_services, &resume_handle, nullptr);
-    vector<BYTE> bytes(byte_count);
-    EnumServicesStatusExW(handle, SC_ENUM_PROCESS_INFO, SERVICE_WIN32, SERVICE_STATE_ALL, 
-        reinterpret_cast<BYTE*>(bytes.data()), byte_count, &byte_count, &number_of_services, &resume_handle, nullptr);
-    return make_tuple(move(bytes), number_of_services);
 }
 
 void Services::Events::start() {
@@ -92,9 +90,18 @@ void Services::Events::start() {
     is_running = true;
     thread thread([this] {
         while (true) {
+            Sleep(500);
             if (!is_running)
                 break;
-            // SendEvent();
+            auto new_services = get_services(services.handle);
+            auto new_service_items = access(new_services);
+            auto recent_service_items = access(services.services);
+            if (new_service_items.size() != recent_service_items.size())
+                ; // TODO: throw javascript exception
+            if (!equal(recent_service_items.cbegin(), recent_service_items.cend(), new_service_items.cbegin(), [](auto& i1, auto& i2) {
+                return true;
+            }))
+                SendEvent();
         }
     });
     thread.detach();        
