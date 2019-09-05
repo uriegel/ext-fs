@@ -112,7 +112,6 @@ void Services::Events::start() {
 
             if (result.size() > 0) {
                 SendEvent();
-                // TODO: get_services has to return Service_item with wstrings!!!
                 services.services = new_services;
             }
         }
@@ -128,6 +127,21 @@ void Services::Events::stop() {
 void Services::Events::OnEvent() { 
     HandleScope scope(callback.Env());
     vector<napi_value> args;
+
+    auto result = Array::New(info.Env(), services.size());
+    int i{0};
+    for (auto item: services) {
+        auto obj = Object::New(info.Env());
+
+        obj.Set("name", WString::New(info.Env(), item.name));
+        obj.Set("displayName", WString::New(info.Env(), item.display_name));
+        obj.Set("status", Number::New(info.Env(), item.status));
+
+        result.Set(i++, obj);
+    }
+
+
+
 //    args.push_back(Number::New(callback.Env(), value));
     callback.Call(args);
 }
