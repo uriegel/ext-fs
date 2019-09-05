@@ -45,11 +45,6 @@ Value ExistsFile(const CallbackInfo& info) {
     return Boolean::New(info.Env(), filesystem::exists(file));
 }
 
-Value GetServices(const CallbackInfo& info) {
-    auto file = info[0].As<WString>().WValue();
-    return Boolean::New(info.Env(), filesystem::exists(file));
-}
-
 #endif
 
 Object Init(Env env, Object exports) {
@@ -71,7 +66,9 @@ Object Init(Env env, Object exports) {
     exports.Set(String::New(env, "copyFiles"), Function::New(env, CopyFiles));
     exports.Set(String::New(env, "moveFiles"), Function::New(env, MoveFiles));
     exports.Set(String::New(env, "existsFile"), Function::New(env, ExistsFile));
-    Services::Init(env, exports);
+    exports.Set(String::New(env, "getServices"), Function::New(env, GetServices));
+    exports.Set(String::New(env, "registerServiceEvents"), Function::New(env, RegisterServiceEvents));
+    exports.Set(String::New(env, "unregisterServiceEvents"), Function::New(env, UnregisterServiceEvents));
 #endif        
     return exports;
 }

@@ -1,19 +1,19 @@
 const addon = require('bindings')('extension-fs')
-const Services = addon.Services
 
 let exists = addon.existsFile("A:\\Bilder\\2017\\Abu Dabbab\\M0015912.JPG")
 exists = addon.existsFile("A:\\Bilder\\2017\\Abu Dabbab\\nichda.jpg")
 
-const services = new Services(n => {
-    console.log("Event", n)
-})
-const items = services.get()
+// const services = new Services(n => {
+//     console.log("Event", n)
+// })
+const items = addon.getServices()
 console.log(items)
 
-setInterval(() => {
-    console.log("Hallo")
-    const a = services
-}, 2000)
+const id = addon.registerServiceEvents(n => {
+    console.log("Event", n)
+})
+
+setTimeout(() => addon.unregisterServiceEvents(id), 6000)
 
 return
 

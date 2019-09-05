@@ -1,13 +1,41 @@
-#include "services.h"
-#include <Windows.h>
 #include <string>
 #include <algorithm>
 #include <iterator>
 #include <thread>
 #include <vector>
+#include <event-source-base.h>
+#include "services.h"
 #include "../wstring.h"
+#include <Windows.h>
 using namespace std;
 using namespace Napi;
+using namespace EventSourceBase;
+
+struct Service_item {
+    Service_item(wstring&& name, wstring&& display_name, int status) 
+    : name(name), display_name(display_name), status(status) {}
+    wstring name;
+    wstring display_name;
+    int status;
+};
+
+class Events : public EventSourceBase {
+public:
+    Events(const Napi::Function& callback)
+    : EventSourceBase(callback) { }
+
+    void OnEvent() override;
+    void start();
+    void stop();
+    void send_event() { SendEvent(); }
+private:
+    bool is_running{false};
+};
+
+vector<Service_item> service_items;
+vector<Service_item> event_result;
+SC_HANDLE service_handle{0};
+vector<Events*> events;
 
 auto get_services(SC_HANDLE handle) {
     unsigned long byte_count{0};
@@ -29,44 +57,13 @@ auto get_services(SC_HANDLE handle) {
     return result;
 }
 
-void Services::Init(Napi::Env& env, Object& exports) {
+auto GetServices(const CallbackInfo& info) -> Value {
+    auto handle = service_handle ? service_handle : OpenSCManagerW(nullptr, nullptr, SC_MANAGER_ENUMERATE_SERVICE);
+    service_items = get_services(handle);
 
-    Function ctor = DefineClass(env, "Services", {
-        InstanceMethod("get", &get),
-        InstanceMethod("unregisterEvents", &unregister_events)
-//     InstanceAccessor("type", &Canvas::GetType, nullptr),
-//     InstanceValue("PNG_NO_FILTERS", Napi::Number::New(env, PNG_NO_FILTERS)),
-//     StaticMethod("_registerFont", &Canvas::RegisterFont),
-    });
-
-    // Create a peristent reference to the class constructor. This will allow
-    // a function called on a class prototype and a function
-    // called on instance of a class to be distinguished from each other.
-    constructor = Persistent(ctor);
-    // Call the SuppressDestruct() method on the static data prevent the calling
-    // to this destructor to reset the reference when the environment is no longer
-    // available.    
-    constructor.SuppressDestruct();
-    exports.Set("Services", ctor);
-}
-
-Services::Services(const CallbackInfo& info) 
-    : ObjectWrap<Services>(info)
-    , events(info[0].IsFunction() ? make_shared<Events>(*this, info[0].As<Function>()) : nullptr) {
-    Napi::Env env = info.Env();
-    handle = OpenSCManagerW(nullptr, nullptr, SC_MANAGER_ENUMERATE_SERVICE);
-}
-
-Services::~Services() {
-    CloseServiceHandle(handle);
-}
-
-auto Services::get(const CallbackInfo &info) -> Napi::Value {
-    services = get_services(handle);
-
-    auto result = Array::New(info.Env(), services.size());
+    auto result = Array::New(info.Env(), service_items.size());
     int i{0};
-    for (auto item: services) {
+    for (auto item: service_items) {
         auto obj = Object::New(info.Env());
 
         obj.Set("name", WString::New(info.Env(), item.name));
@@ -76,62 +73,77 @@ auto Services::get(const CallbackInfo &info) -> Napi::Value {
         result.Set(i++, obj);
     }
 
-    if (events)
-        events->start();
-
+    if (!service_handle)
+        CloseServiceHandle(handle);
     return result;
 }
 
-auto Services::unregister_events(const Napi::CallbackInfo &info) -> Napi::Value {
-    if (events)
-        events->stop();
-    return Object::New(info.Env());
-}
+auto RegisterServiceEvents(const CallbackInfo& info) -> Value { 
+    if (events.empty()) 
+        service_handle = OpenSCManagerW(nullptr, nullptr, SC_MANAGER_ENUMERATE_SERVICE);
 
-void Services::Events::start() {
-    Initialize();
-    is_running = true;
-     thread thread([this] {
-        while (true) {
-            Sleep(500);
-            if (!is_running)
-                break;
-            auto new_services = get_services(services.handle);
-            unordered_map<wstring, Service_item> new_services_map;
-            transform(new_services.begin(), new_services.end(), inserter(new_services_map, new_services_map.end()),
-               [](auto service_item) { return make_pair(service_item.name, service_item); });
+    auto event = new Events(info[0].As<Function>());
+    events.push_back(event);
+    event->start();
+    if (events.size() == 1) {
+        thread thread([] {
+            while (true) {
+                Sleep(500);
+                if (events.empty())
+                    break;
+                auto new_services = get_services(service_handle);
+                unordered_map<wstring, Service_item> new_services_map;
+                transform(new_services.begin(), new_services.end(), inserter(new_services_map, new_services_map.end()),
+                    [](auto service_item) { return make_pair(service_item.name, service_item); });
 
-            auto changes = remove_if(services.services.begin(), services.services.end(), [new_services_map](auto service_item) {
-                auto it = new_services_map.find(service_item.name);
-                return it != new_services_map.end()
+                auto changes = remove_if(service_items.begin(), service_items.end(), [new_services_map](auto service_item) {
+                    auto it = new_services_map.find(service_item.name);
+                    return it != new_services_map.end()
                     ? service_item.status == it->second.status
                     : true;
-            }); 
+                }); 
 
-            result.clear();
-	        transform(services.services.begin(), changes, back_inserter(result), [](auto item){ return item; });
+                event_result.clear();
+                transform(service_items.begin(), changes, back_inserter(event_result), [](auto item){ return item; });
 
-            if (result.size() > 0) {
-                SendEvent();
-                services.services = new_services;
+                if (event_result.size() > 0) {
+                    for (auto item: events) 
+                        item->send_event();
+                    service_items = new_services;
+
+                }
             }
-        }
-    });
-    thread.detach();        
+        });
+        thread.detach();        
+    }
+    return Number::New(info.Env(), (long long)event);
 }
 
-void Services::Events::stop() {
-    is_running = false;
+auto UnregisterServiceEvents(const CallbackInfo& info) -> Value { 
+    auto event = reinterpret_cast<Events*>(info[0].As<Number>().Int64Value());
+    auto it = find(events.begin(), events.end(), event);
+    events.erase(it);
+    // TODO: race condition (thread)
+    event->stop();
+
+    if (events.empty()) 
+        CloseServiceHandle(service_handle);
+    return Value(); 
+}
+
+void Events::start() { Initialize(); }
+
+void Events::stop() { 
     Dispose();
 }
 
-void Services::Events::OnEvent() { 
+void Events::OnEvent() { 
     HandleScope scope(callback.Env());
     vector<napi_value> args;
 
-    auto result = Array::New(callback.Env(), this->result.size());
+    auto result = Array::New(callback.Env(), event_result.size());
     int i{0};
-    for (auto item: this->result) {
+    for (auto item: event_result) {
         auto obj = Object::New(callback.Env());
 
         obj.Set("name", WString::New(callback.Env(), item.name));
@@ -145,4 +157,3 @@ void Services::Events::OnEvent() {
     callback.Call(args);
 }
 
-FunctionReference Services::constructor;
