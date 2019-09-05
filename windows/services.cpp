@@ -108,6 +108,7 @@ void Services::Events::start() {
                     : true;
             }); 
 
+            result.clear();
 	        transform(services.services.begin(), changes, back_inserter(result), [](auto item){ return item; });
 
             if (result.size() > 0) {
@@ -128,21 +129,19 @@ void Services::Events::OnEvent() {
     HandleScope scope(callback.Env());
     vector<napi_value> args;
 
-    auto result = Array::New(info.Env(), services.size());
+    auto result = Array::New(callback.Env(), this->result.size());
     int i{0};
-    for (auto item: services) {
-        auto obj = Object::New(info.Env());
+    for (auto item: this->result) {
+        auto obj = Object::New(callback.Env());
 
-        obj.Set("name", WString::New(info.Env(), item.name));
-        obj.Set("displayName", WString::New(info.Env(), item.display_name));
-        obj.Set("status", Number::New(info.Env(), item.status));
+        obj.Set("name", WString::New(callback.Env(), item.name));
+        obj.Set("displayName", WString::New(callback.Env(), item.display_name));
+        obj.Set("status", Number::New(callback.Env(), item.status));
 
         result.Set(i++, obj);
     }
 
-
-
-//    args.push_back(Number::New(callback.Env(), value));
+    args.push_back(result);
     callback.Call(args);
 }
 

@@ -4,7 +4,6 @@ const Services = addon.Services
 let exists = addon.existsFile("A:\\Bilder\\2017\\Abu Dabbab\\M0015912.JPG")
 exists = addon.existsFile("A:\\Bilder\\2017\\Abu Dabbab\\nichda.jpg")
 
-
 const services = new Services(n => {
     console.log("Event", n)
 })
