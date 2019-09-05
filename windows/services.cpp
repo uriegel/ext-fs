@@ -1,6 +1,8 @@
 #include "services.h"
 #include <Windows.h>
 #include <string>
+#include <algorithm>
+#include <iterator>
 #include <thread>
 #include <vector>
 #include "../wstring.h"
@@ -95,15 +97,26 @@ void Services::Events::start() {
                 break;
             auto new_services = get_services(services.handle);
             auto new_service_items = access(new_services);
+            unordered_map<wstring, ENUM_SERVICE_STATUS_PROCESSW> new_services_map;
+            transform(new_service_items.begin(), new_service_items.end(), inserter(new_services_map, new_services_map.end()),
+               [](auto essp) { return make_pair(essp.lpServiceName, essp); });
+
             auto recent_service_items = access(services.services);
-            if (new_service_items.size() != recent_service_items.size())
-                ; // TODO: throw javascript exception
-            vector<
-            if (!equal(recent_service_items.cbegin(), recent_service_items.cend(), new_service_items.cbegin(), [](auto& i1, auto& i2) {
-                if (i1.ServiceStatusProcess.dwCurrentState != i2.ServiceStatusProcess.dwCurrentState)
-                return i1.ServiceStatusProcess.dwCurrentState == i2.ServiceStatusProcess.dwCurrentState;
-            }))
+            auto changes = remove_if(recent_service_items.begin(), recent_service_items.end(), [new_services_map](const ENUM_SERVICE_STATUS_PROCESSW& essp) {
+                auto it = new_services_map.find(essp.lpServiceName);
+                return it != new_services_map.end()
+                    ? essp.ServiceStatusProcess.dwCurrentState == it->second.ServiceStatusProcess.dwCurrentState
+                    : true;
+            }); 
+
+        	vector<ENUM_SERVICE_STATUS_PROCESSW> result;
+	        transform(recent_service_items.begin(), changes, back_inserter(result), [](auto essp) { return essp; });
+
+            if (result.size() > 0) {
                 SendEvent();
+                // TODO: get_services has to return Service_item with wstrings!!!
+                services.services = new_services;
+            }
         }
     });
     thread.detach();        
@@ -115,7 +128,10 @@ void Services::Events::stop() {
 }
 
 void Services::Events::OnEvent() { 
-
+    HandleScope scope(callback.Env());
+    vector<napi_value> args;
+    args.push_back(Number::New(callback.Env(), value));
+    callback.Call(args);
 }
 
 FunctionReference Services::constructor;
