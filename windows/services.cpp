@@ -9,16 +9,24 @@
 using namespace std;
 using namespace Napi;
 
-auto get_services(SC_HANDLE handle) -> tuple<vector<unsigned char>, int> {
-    DWORD byte_count{0};
-    DWORD number_of_services{0};
-    DWORD resume_handle{0};
+auto get_services(SC_HANDLE handle) {
+    unsigned long byte_count{0};
+    unsigned long number_of_services{0};
+    unsigned long resume_handle{0};
     EnumServicesStatusExW(handle, SC_ENUM_PROCESS_INFO, SERVICE_WIN32, SERVICE_STATE_ALL, nullptr, 0, 
         &byte_count, &number_of_services, &resume_handle, nullptr);
-    vector<BYTE> bytes(byte_count);
+    vector<unsigned char> bytes(byte_count);
     EnumServicesStatusExW(handle, SC_ENUM_PROCESS_INFO, SERVICE_WIN32, SERVICE_STATE_ALL, 
-        reinterpret_cast<BYTE*>(bytes.data()), byte_count, &byte_count, &number_of_services, &resume_handle, nullptr);
-    return make_tuple(move(bytes), number_of_services);
+        reinterpret_cast<unsigned char*>(bytes.data()), byte_count, &byte_count, &number_of_services, &resume_handle, nullptr);
+
+    auto services = vector<ENUM_SERVICE_STATUS_PROCESSW>(reinterpret_cast<ENUM_SERVICE_STATUS_PROCESSW*>(bytes.data()), 
+         reinterpret_cast<ENUM_SERVICE_STATUS_PROCESSW*>(bytes.data()) + number_of_services);
+
+    vector<Service_item> result;
+    transform(services.cbegin(), services.cend(), back_inserter(result), [](ENUM_SERVICE_STATUS_PROCESSW item) { 
+        return Service_item(item.lpServiceName, item.lpDisplayName, item.ServiceStatusProcess.dwCurrentState);
+    });    
+    return result;
 }
 
 void Services::Init(Napi::Env& env, Object& exports) {
@@ -53,24 +61,17 @@ Services::~Services() {
     CloseServiceHandle(handle);
 }
 
-vector<ENUM_SERVICE_STATUS_PROCESSW> access(tuple<vector<unsigned char>, int>& mem) {
-    auto& [bytes, number_of_services] = mem;
-    return vector<ENUM_SERVICE_STATUS_PROCESSW>(reinterpret_cast<ENUM_SERVICE_STATUS_PROCESSW*>(bytes.data()), 
-         reinterpret_cast<ENUM_SERVICE_STATUS_PROCESSW*>(bytes.data()) + number_of_services);
-}
-
 auto Services::get(const CallbackInfo &info) -> Napi::Value {
     services = get_services(handle);
-    auto service_items = access(services);
 
-    auto result = Array::New(info.Env(), service_items.size());
+    auto result = Array::New(info.Env(), services.size());
     int i{0};
-    for (auto item: service_items) {
+    for (auto item: services) {
         auto obj = Object::New(info.Env());
 
-        obj.Set("name", WString::New(info.Env(), item.lpServiceName));
-        obj.Set("displayName", WString::New(info.Env(), item.lpDisplayName));
-        obj.Set("status", Number::New(info.Env(), item.ServiceStatusProcess.dwCurrentState));
+        obj.Set("name", WString::New(info.Env(), item.name));
+        obj.Set("displayName", WString::New(info.Env(), item.display_name));
+        obj.Set("status", Number::New(info.Env(), item.status));
 
         result.Set(i++, obj);
     }
@@ -90,27 +91,24 @@ auto Services::unregister_events(const Napi::CallbackInfo &info) -> Napi::Value 
 void Services::Events::start() {
     Initialize();
     is_running = true;
-    thread thread([this] {
+     thread thread([this] {
         while (true) {
             Sleep(500);
             if (!is_running)
                 break;
             auto new_services = get_services(services.handle);
-            auto new_service_items = access(new_services);
-            unordered_map<wstring, ENUM_SERVICE_STATUS_PROCESSW> new_services_map;
-            transform(new_service_items.begin(), new_service_items.end(), inserter(new_services_map, new_services_map.end()),
-               [](auto essp) { return make_pair(essp.lpServiceName, essp); });
+            unordered_map<wstring, Service_item> new_services_map;
+            transform(new_services.begin(), new_services.end(), inserter(new_services_map, new_services_map.end()),
+               [](auto service_item) { return make_pair(service_item.name, service_item); });
 
-            auto recent_service_items = access(services.services);
-            auto changes = remove_if(recent_service_items.begin(), recent_service_items.end(), [new_services_map](const ENUM_SERVICE_STATUS_PROCESSW& essp) {
-                auto it = new_services_map.find(essp.lpServiceName);
+            auto changes = remove_if(services.services.begin(), services.services.end(), [new_services_map](auto service_item) {
+                auto it = new_services_map.find(service_item.name);
                 return it != new_services_map.end()
-                    ? essp.ServiceStatusProcess.dwCurrentState == it->second.ServiceStatusProcess.dwCurrentState
+                    ? service_item.status == it->second.status
                     : true;
             }); 
 
-        	vector<ENUM_SERVICE_STATUS_PROCESSW> result;
-	        transform(recent_service_items.begin(), changes, back_inserter(result), [](auto essp) { return essp; });
+	        transform(services.services.begin(), changes, back_inserter(result), [](auto item){ return item; });
 
             if (result.size() > 0) {
                 SendEvent();
@@ -130,7 +128,7 @@ void Services::Events::stop() {
 void Services::Events::OnEvent() { 
     HandleScope scope(callback.Env());
     vector<napi_value> args;
-    args.push_back(Number::New(callback.Env(), value));
+//    args.push_back(Number::New(callback.Env(), value));
     callback.Call(args);
 }
 
