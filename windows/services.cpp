@@ -130,6 +130,11 @@ auto UnregisterServiceEvents(const CallbackInfo& info) -> Value {
     return Value(); 
 }
 
+auto StartService1(const CallbackInfo& info) -> Value { 
+    ShellExecuteW(nullptr, L"runas", L"helloworld", /*LR"(C:\Users\urieg\Sources\affe\index.js)"*/ nullptr, nullptr, SW_HIDE);
+    return Value(); 
+}
+
 void Events::start() { Initialize(); }
 
 void Events::stop() { 

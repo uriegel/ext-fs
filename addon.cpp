@@ -69,6 +69,7 @@ Object Init(Env env, Object exports) {
     exports.Set(String::New(env, "getServices"), Function::New(env, GetServices));
     exports.Set(String::New(env, "registerServiceEvents"), Function::New(env, RegisterServiceEvents));
     exports.Set(String::New(env, "unregisterServiceEvents"), Function::New(env, UnregisterServiceEvents));
+    exports.Set(String::New(env, "startService"), Function::New(env, StartService1));
 #endif        
     return exports;
 }
