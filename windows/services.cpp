@@ -91,26 +91,25 @@ auto RegisterServiceEvents(const CallbackInfo& info) -> Value {
                 Sleep(500);
                 if (events.empty())
                     break;
-                auto new_services = get_services(service_handle);
-                unordered_map<wstring, Service_item> new_services_map;
-                transform(new_services.begin(), new_services.end(), inserter(new_services_map, new_services_map.end()),
+                auto new_service_items = get_services(service_handle);
+                unordered_map<wstring, Service_item> old_services_map;
+                transform(service_items.begin(), service_items.end(), inserter(old_services_map, old_services_map.end()),
                     [](auto service_item) { return make_pair(service_item.name, service_item); });
 
-                auto changes = remove_if(service_items.begin(), service_items.end(), [new_services_map](auto service_item) {
-                    auto it = new_services_map.find(service_item.name);
-                    return it != new_services_map.end()
+                auto changes = remove_if(new_service_items.begin(), new_service_items.end(), [old_services_map](auto service_item) {
+                    auto it = old_services_map.find(service_item.name);
+                    return it != old_services_map.end()
                     ? service_item.status == it->second.status
                     : true;
                 }); 
 
                 event_result.clear();
-                transform(service_items.begin(), changes, back_inserter(event_result), [](auto item){ return item; });
+                transform(new_service_items.begin(), changes, back_inserter(event_result), [](auto item){ return item; });
 
                 if (event_result.size() > 0) {
                     for (auto item: events) 
                         item->send_event();
-                    service_items = new_services;
-
+                    service_items = new_service_items;
                 }
             }
         });
