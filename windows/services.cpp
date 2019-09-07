@@ -131,7 +131,8 @@ auto UnregisterServiceEvents(const CallbackInfo& info) -> Value {
 }
 
 auto StartService1(const CallbackInfo& info) -> Value { 
-    ShellExecuteW(nullptr, L"runas", L"helloworld", /*LR"(C:\Users\urieg\Sources\affe\index.js)"*/ nullptr, nullptr, SW_HIDE);
+    auto directory = info[0].As<WString>().WValue();
+    ShellExecuteW(nullptr, L"runas", directory.c_str(), /*LR"(C:\Users\urieg\Sources\affe\index.js)"*/ nullptr, nullptr, SW_HIDE);
     return Value(); 
 }
 
