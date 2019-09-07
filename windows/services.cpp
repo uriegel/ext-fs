@@ -129,7 +129,7 @@ auto UnregisterServiceEvents(const CallbackInfo& info) -> Value {
         CloseServiceHandle(service_handle);
     return Value(); 
 }
-
+#include <iostream>
 void service_action(const Env& env, const wstring& name, function<void(SC_HANDLE handle)> action) {
     auto sc_handle = OpenSCManagerW(nullptr, nullptr, GENERIC_READ);
     auto service =  OpenServiceW(sc_handle, name.c_str(), GENERIC_READ | SERVICE_START);
@@ -148,7 +148,7 @@ auto StartService1(const CallbackInfo& info) -> Value {
     auto name = info[0].As<WString>().WValue();
     service_action(info.Env(), name, [](SC_HANDLE service){ 
         auto res = StartServiceW(service, 0, nullptr); 
-        error = GetLastError();
+        auto error = GetLastError();
         cout << "first error: " << error << endl;        
     });
     return Value(); 
