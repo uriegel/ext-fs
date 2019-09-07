@@ -130,9 +130,30 @@ auto UnregisterServiceEvents(const CallbackInfo& info) -> Value {
     return Value(); 
 }
 
+void service_action(const Env& env, const wstring& name, function<void(SC_HANDLE handle)> action) {
+    auto sc_handle = OpenSCManagerW(nullptr, nullptr, GENERIC_READ);
+    auto service =  OpenServiceW(sc_handle, name.c_str(), GENERIC_READ | SERVICE_START);
+    if (!service && GetLastError() == 5) {
+        Error::New(env, "5").ThrowAsJavaScriptException();
+        CloseServiceHandle(sc_handle);
+    }
+    action(service);
+    CloseServiceHandle(service);
+    CloseServiceHandle(sc_handle);
+}
+
 auto StartService1(const CallbackInfo& info) -> Value { 
-    auto directory = info[0].As<WString>().WValue();
-    ShellExecuteW(nullptr, L"runas", L"helloworld.exe", /*LR"(C:\Users\urieg\Sources\affe\index.js)"*/ nullptr, directory.c_str(), SW_HIDE);
+    auto name = info[0].As<WString>().WValue();
+    service_action(info.Env(), name, [](SC_HANDLE service){ StartServiceW(service, 0, nullptr); });
+    return Value(); 
+}
+
+Napi::Value StopService(const Napi::CallbackInfo& info) {
+    auto name = info[0].As<WString>().WValue();
+    service_action(info.Env(), name, [](SC_HANDLE service){ 
+        SERVICE_STATUS srv_stat{0};
+        ControlService(service, SERVICE_CONTROL_STOP, &srv_stat); 
+    });
     return Value(); 
 }
 

@@ -3,7 +3,12 @@ const addon = require('bindings')('extension-fs')
 let exists = addon.existsFile("A:\\Bilder\\2017\\Abu Dabbab\\M0015912.JPG")
 exists = addon.existsFile("A:\\Bilder\\2017\\Abu Dabbab\\nichda.jpg")
 
-addon.startService("C:\\Users\\urieg\\Sources\\affe\\build")
+try {
+    addon.startService("AxInstSV")
+}
+catch (err) {
+    console.error("Fehler", err)
+}
 
 // const services = new Services(n => {
 //     console.log("Event", n)
