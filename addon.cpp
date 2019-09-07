@@ -45,6 +45,11 @@ Value ExistsFile(const CallbackInfo& info) {
     return Boolean::New(info.Env(), filesystem::exists(file));
 }
 
+Value startElevated(const CallbackInfo& info) {
+    start_elevated();
+    return info.Env().Undefined();
+}
+
 #endif
 
 Object Init(Env env, Object exports) {
@@ -70,6 +75,7 @@ Object Init(Env env, Object exports) {
     exports.Set(String::New(env, "registerServiceEvents"), Function::New(env, RegisterServiceEvents));
     exports.Set(String::New(env, "unregisterServiceEvents"), Function::New(env, UnregisterServiceEvents));
     exports.Set(String::New(env, "startService"), Function::New(env, StartService1));
+    exports.Set(String::New(env, "startElevated"), Function::New(env, startElevated));
 #endif        
     return exports;
 }

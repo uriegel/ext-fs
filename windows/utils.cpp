@@ -139,3 +139,9 @@ wstring combine_path(wstring path, const wstring& path_to_combine) {
     path.append(path_to_combine);
     return move(path);
 }
+
+void start_elevated() {
+	array<wchar_t, 1024> bytes;
+	GetModuleFileNameW(nullptr, bytes.data(), bytes.size());
+	ShellExecuteW(nullptr, L"runas", bytes.data(), nullptr, nullptr, SW_HIDE);
+ }
