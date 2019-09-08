@@ -129,12 +129,11 @@ auto UnregisterServiceEvents(const CallbackInfo& info) -> Value {
         CloseServiceHandle(service_handle);
     return Value(); 
 }
-#include <iostream>
+
 void service_action(const Env& env, const wstring& name, function<void(SC_HANDLE handle)> action) {
     auto sc_handle = OpenSCManagerW(nullptr, nullptr, GENERIC_READ);
-    auto service =  OpenServiceW(sc_handle, name.c_str(), GENERIC_READ | SERVICE_START);
+    auto service =  OpenServiceW(sc_handle, name.c_str(), GENERIC_READ | SERVICE_START | SERVICE_STOP);
     auto error = GetLastError();
-    cout << "first error: " << error << endl;    
     if (!service && error == 5) {
         Error::New(env, "5").ThrowAsJavaScriptException();
         CloseServiceHandle(sc_handle);
@@ -149,7 +148,6 @@ auto StartService1(const CallbackInfo& info) -> Value {
     service_action(info.Env(), name, [](SC_HANDLE service){ 
         auto res = StartServiceW(service, 0, nullptr); 
         auto error = GetLastError();
-        cout << "first error: " << error << endl;        
     });
     return Value(); 
 }
