@@ -8,6 +8,7 @@
 #include "get_file_version_worker.h"
 #include "get_exif_date_worker.h"
 #include "get_conflicts_worker.h"
+#include "get_net_shares_worker.h"
 #include "create_directory_worker.h"
 #include "rename_worker.h"
 #include "delete_files_worker.h"
@@ -77,6 +78,7 @@ Object Init(Env env, Object exports) {
     exports.Set(String::New(env, "startService"), Function::New(env, StartService1));
     exports.Set(String::New(env, "stopService"), Function::New(env, StopService));
     exports.Set(String::New(env, "startElevated"), Function::New(env, startElevated));
+    exports.Set(String::New(env, "getNetShares"), Function::New(env, GetNetShares));
 #endif        
     return exports;
 }

@@ -3,12 +3,12 @@ const addon = require('bindings')('extension-fs')
 let exists = addon.existsFile("A:\\Bilder\\2017\\Abu Dabbab\\M0015912.JPG")
 exists = addon.existsFile("A:\\Bilder\\2017\\Abu Dabbab\\nichda.jpg")
 
-try {
-    addon.startService("AxInstSV")
-}
-catch (err) {
-    console.error("Fehler", err)
-}
+// try {
+//     addon.startService("AxInstSV")
+// }
+// catch (err) {
+//     console.error("Fehler", err)
+// }
 
 // const services = new Services(n => {
 //     console.log("Event", n)
@@ -22,11 +22,12 @@ const id = addon.registerServiceEvents(n => {
 
 setTimeout(() => addon.unregisterServiceEvents(id), 6000)
 
-return
-
 const run = async () => {
 
-    
+    const shares = await addon.getNetShares("cas-storage")
+    console.log("Shärs", shares)
+    return    
+
     addon.copyFiles("C:\\Users\\uwe.CASERIS\\Pictures", "h:\\",
     [ "Bild02.jpg" ], [])
 
@@ -155,6 +156,8 @@ const run = async () => {
     console.info(`Execution time version iteration: ${((hrend - hrstart) / BigInt(1000000.0))} ms`)
 }
 run()
+
+return
 
 // addon.showInfo("C:\\Program Files\\nodejs\\node.exe")
 // addon.open("C:\\Windows\\notepad.exe")
