@@ -11,6 +11,7 @@
         ],
         'dependencies': ["<!(node -p \"require('node-addon-api').gyp\")"],
         "cflags": ["-Wall", "-std=c++17"],
+        'cflags_cc': ["-Wall", "-std=c++17"],
         'cflags!': [ '-fno-exceptions' ],
         'cflags_cc!': [ '-fno-exceptions' ],
         'link_settings': {
@@ -35,8 +36,6 @@
                 }                
             }],
             ['OS=="linux"', {
-                'cflags': ["-Wall", "-std=c++17"],
-                'cflags_cc': ["-Wall", "-std=c++17"],
                 'defines': ['LINUX'],
                 'sources!': [
                     'get_files_worker.cpp',
