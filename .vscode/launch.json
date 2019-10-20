@@ -13,6 +13,17 @@
              "externalConsole": false
          },
          {
+            "name": "Launch C++ (Linux)",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "/opt/node-v12.12.0-linux-x64/bin/node",
+            "args": [ "${workspaceFolder}/dev/index.js" ],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "gdb",
+        },         {
             "name": "Launch javascript",
             "type": "node",
             "request": "launch",
