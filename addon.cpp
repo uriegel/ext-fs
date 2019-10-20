@@ -1,6 +1,7 @@
 #define NAPI_EXPERIMENTAL
 #include <napi.h>
 #include <filesystem>
+#if WINDOWS
 #include "windows/services.h"
 #include "get_drives_worker.h"
 #include "get_files_worker.h"
@@ -14,13 +15,16 @@
 #include "delete_files_worker.h"
 #include "copy_worker.h"
 #include "wstring.h"
-#if WINDOWS
 #include "windows/shell.h"
 #include "windows/utils.h"
 #elif LINUX
 #endif
 using namespace Napi;
 using namespace std;
+
+Napi::Value GetTest(const Napi::CallbackInfo& info) {
+    return Number::New(info.Env(), static_cast<double>(567));   
+}    
 
 #if WINDOWS
 Value ShowInfo(const CallbackInfo& info) {
@@ -58,10 +62,8 @@ Object Init(Env env, Object exports) {
     exports.Set(String::New(env, "getFiles"), Function::New(env, GetFiles));
     exports.Set(String::New(env, "getDrives"), Function::New(env, GetDrives));
     exports.Set(String::New(env, "getIcon"), Function::New(env, GetIcon));
-#endif    
     exports.Set(String::New(env, "getExifDate"), Function::New(env, GetExifDate));
     exports.Set(String::New(env, "getConflicts"), Function::New(env, GetConflicts));
-#if WINDOWS        
     exports.Set(String::New(env, "getFileVersion"), Function::New(env, GetFileVersion));
     exports.Set(String::New(env, "showInfo"), Function::New(env, ShowInfo));
     exports.Set(String::New(env, "open"), Function::New(env, Open));
@@ -80,6 +82,7 @@ Object Init(Env env, Object exports) {
     exports.Set(String::New(env, "startElevated"), Function::New(env, startElevated));
     exports.Set(String::New(env, "getNetShares"), Function::New(env, GetNetShares));
 #endif        
+    exports.Set(String::New(env, "getTest"), Function::New(env, GetTest));
     return exports;
 }
 

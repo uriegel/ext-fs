@@ -19,7 +19,21 @@
             "cStandard": "c11",
             "cppStandard": "c++17",
             "intelliSenseMode": "msvc-x64"
-        }
+        },
+        {
+            "name": "Linux",
+            "includePath": [
+                "${workspaceFolder}/**",
+                "${workspaceFolder}/node_modules/node-addon-api/src/**",
+                "${workspaceFolder}/node_modules/node-addon-api",
+                "${workspaceFolder}/node_modules/event-source-base"
+            ],
+            "defines": [],
+            "compilerPath": "/usr/bin/g++",
+            "cStandard": "c11",
+            "cppStandard": "c++17",
+            "intelliSenseMode": "gcc-x64"
+        }        
     ],
     "version": 4
 }
