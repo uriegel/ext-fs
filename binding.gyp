@@ -35,6 +35,8 @@
                 }                
             }],
             ['OS=="linux"', {
+                'cflags': ["-Wall", "-std=c++17"],
+                'cflags_cc': ["-Wall", "-std=c++17"],
                 'defines': ['LINUX'],
                 'sources!': [
                     'get_files_worker.cpp',

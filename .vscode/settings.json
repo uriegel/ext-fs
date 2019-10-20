@@ -72,6 +72,13 @@
         "locale": "cpp",
         "xlocbuf": "cpp",
         "xlocmes": "cpp",
-        "filesystem": "cpp"
+        "filesystem": "cpp",
+        "bit": "cpp",
+        "cstdarg": "cpp",
+        "set": "cpp",
+        "unordered_set": "cpp",
+        "memory_resource": "cpp",
+        "numeric": "cpp",
+        "random": "cpp"
     }
 }
