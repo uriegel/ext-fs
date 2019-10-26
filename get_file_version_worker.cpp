@@ -1,6 +1,7 @@
 #define NAPI_EXPERIMENTAL
 #include <napi.h>
 #include <vector>
+#include <optional>
 #include "wstring.h"
 #include "nullfunction.h"
 #include "version_info.h"
@@ -28,21 +29,22 @@ public:
 private:
     Promise::Deferred deferred;
     wstring file;
-    Version_info version;
+    optional<Version_info> version;
 };
 
 void Get_file_version_worker::OnOK() {
     auto env = Env();
     HandleScope scope(env);
 
-    auto obj = Object::New(Env());
-
-    obj.Set("major", Number::New(Env(), static_cast<double>(version.major)));
-    obj.Set("minor", Number::New(Env(), static_cast<double>(version.minor)));
-    obj.Set("build", Number::New(Env(), static_cast<double>(version.build)));
-    obj.Set("patch", Number::New(Env(), static_cast<double>(version.patch)));
-
-    deferred.Resolve(obj);
+    if (version.has_value()) {
+        auto obj = Object::New(Env());
+        obj.Set("major", Number::New(Env(), static_cast<double>(version.value.major)));
+        obj.Set("minor", Number::New(Env(), static_cast<double>(version.value.minor)));
+        obj.Set("build", Number::New(Env(), static_cast<double>(version.value.build)));
+        obj.Set("patch", Number::New(Env(), static_cast<double>(version.value.patch)));
+        deferred.Resolve(obj);
+    } else 
+        deferred.Resolve(Env().Null);
 }
 
 Value GetFileVersion(const CallbackInfo& info) {
