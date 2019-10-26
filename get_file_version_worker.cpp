@@ -38,13 +38,13 @@ void Get_file_version_worker::OnOK() {
 
     if (version.has_value()) {
         auto obj = Object::New(Env());
-        obj.Set("major", Number::New(Env(), static_cast<double>(version.value.major)));
-        obj.Set("minor", Number::New(Env(), static_cast<double>(version.value.minor)));
-        obj.Set("build", Number::New(Env(), static_cast<double>(version.value.build)));
-        obj.Set("patch", Number::New(Env(), static_cast<double>(version.value.patch)));
+        obj.Set("major", Number::New(Env(), static_cast<double>(version.value().major)));
+        obj.Set("minor", Number::New(Env(), static_cast<double>(version.value().minor)));
+        obj.Set("build", Number::New(Env(), static_cast<double>(version.value().build)));
+        obj.Set("patch", Number::New(Env(), static_cast<double>(version.value().patch)));
         deferred.Resolve(obj);
     } else 
-        deferred.Resolve(Env().Null);
+        deferred.Resolve(Env().Null());
 }
 
 Value GetFileVersion(const CallbackInfo& info) {

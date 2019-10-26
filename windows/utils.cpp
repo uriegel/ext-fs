@@ -3,6 +3,7 @@
 #include <array>
 #include "utils.h"
 #include "..\std_utils.h"
+#include "..\version_info.h"
 using namespace std;
 
 uint64_t convert_windowstime_to_unixtime(const FILETIME& ft) {
@@ -125,12 +126,12 @@ optional<Version_info> get_file_info_version(const wstring& file_name) {
 	uint32_t len{0};
 	VerQueryValueW(data.data(), L"\\", reinterpret_cast<void**>(&info), &len);
 
-    return make_optional<Version_info>({
+    return make_optional<Version_info>(
         HIWORD(info->dwFileVersionMS),
         LOWORD(info->dwFileVersionMS),
         HIWORD(info->dwFileVersionLS),
         LOWORD(info->dwFileVersionLS)
-    });
+	);
 }
 
 wstring combine_path(wstring path, const wstring& path_to_combine) {

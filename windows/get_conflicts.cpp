@@ -1,6 +1,7 @@
 #include <windows.h>
 #include <string>
 #include <vector>
+#include <optional>
 #include "get_conflicts.h"
 #include "utils.h"
 #include "../std_utils.h"
@@ -24,8 +25,8 @@ void get_conflicts(const wstring& source_path, const wstring& target_path, const
             }
             FindClose(ret);
         } else {
-            Version_info source_version{0};
-            Version_info target_version{0};
+            optional<Version_info> source_version;
+            optional<Version_info> target_version;
             if (ends_with(path, L"exe") || ends_with(path, L"dll")) {
                 auto sourceFile = combine_path(source_path, sub_path + L"\\" + source_info.cFileName);
                 source_version = get_file_info_version(sourceFile);
