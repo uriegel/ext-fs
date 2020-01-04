@@ -8,7 +8,7 @@ using namespace std;
 #ifdef WINDOWS
 uint64_t get_exif_date(const wstring& file) {
 #elif LINUX
-int64_t get_exif_date(const string& file) {
+uint64_t get_exif_date(const string& file) {
 #endif
     Exif_reader er(file);
 	auto res = er.initialize();
