@@ -1,15 +1,11 @@
 #define NAPI_EXPERIMENTAL
 #include <napi.h>
 #include <vector>
-#include "wstring.h"
-#include "nullfunction.h"
-#include "get_exif_date_worker.h"
+#include "../wstring.h"
+#include "../nullfunction.h"
+#include "../get_exif_date_worker.h"
 #include "file_item.h"
-#include "exif_reader.h"
-#if WINDOWS
-#include "windows/utils.h"
-#elif LINUX
-#endif
+#include "../exif_reader.h"
 using namespace Napi;
 using namespace std;
 

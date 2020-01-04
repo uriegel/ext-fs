@@ -1,10 +1,13 @@
 #define NAPI_EXPERIMENTAL
+#include <windows.h>
 #include <napi.h>
+#include <algorithm>
 #include <string>
 #include <vector>
-#include "wstring.h"
-#include "nullfunction.h"
-#include "get_files_worker.h"
+#include "../wstring.h"
+#include "../nullfunction.h"
+#include "../get_files_worker.h"
+#include "utils.h"
 using namespace Napi;
 using namespace std;
 
@@ -22,7 +25,27 @@ struct File_item {
 	const uint64_t time;
 };
 
-vector<File_item> get_files(const wstring& directory);
+vector<File_item> get_files(const wstring& directory) {
+    auto search_string = (directory[directory.length()-1] == L'\\' || directory[directory.length()-1] == L'/') 
+        ? directory + L"*.*"s
+        : directory + L"\\*.*"s;
+    replace(search_string.begin(), search_string.end(), L'/', L'\\'); 
+
+	vector<File_item> result;
+    WIN32_FIND_DATAW w32fd{ 0 };
+    auto ret = FindFirstFileW(search_string.c_str(), &w32fd);
+    while (FindNextFileW(ret, &w32fd) == TRUE) {
+        result.emplace_back(
+            w32fd.cFileName,
+            (w32fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) == FILE_ATTRIBUTE_DIRECTORY,
+            (w32fd.dwFileAttributes & FILE_ATTRIBUTE_HIDDEN) == FILE_ATTRIBUTE_HIDDEN,
+            static_cast<uint64_t>(w32fd.nFileSizeHigh) << 32 | w32fd.nFileSizeLow,
+            convert_windowstime_to_unixtime(w32fd.ftLastWriteTime)
+        );
+    }
+	FindClose(ret);
+	return result;
+}
 
 class Get_files_worker : public AsyncWorker {
 public:
