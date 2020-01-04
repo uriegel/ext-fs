@@ -27,9 +27,6 @@ struct File_item {
 vector<File_item> get_files(const string& directory) {
     vector<File_item> result;
     for (auto entry : directory_iterator(directory)) {
-        auto ret = entry.path().filename().string();
-        auto nochwwas = entry.file_size();
-        auto weee = ret;
         result.emplace_back(entry.path().filename().string(), entry.is_directory(), false, entry.file_size(), 0);
     }
     return result;
