@@ -2,6 +2,21 @@ const addon = require('bindings')('extension-fs')
 const test = addon.getTest()
 console.log("Test", test)
 
+const runLinux = async () => {
+    //const path = "A:/Bilder/2017/Abu Dabbab"
+    const path = "/daten/Bilder/Tina/2018/07"
+    let exifFiles = await addon.getFiles(path)
+
+    let start = process.hrtime.bigint()
+    for (let i = 0; i < 100; i++) {
+        let exifFiles = await addon.getFiles(path)
+    }
+    let end = process.hrtime.bigint()
+    console.info(`Execution time : ${((end - start) / BigInt(100000000.0))} ms`)
+}
+
+runLinux() 
+
 return
 
 let exists = addon.existsFile("A:\\Bilder\\2017\\Abu Dabbab\\M0015912.JPG")

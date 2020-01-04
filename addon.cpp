@@ -1,10 +1,10 @@
 #define NAPI_EXPERIMENTAL
 #include <napi.h>
 #include <filesystem>
+#include "get_files_worker.h"
 #if WINDOWS
 #include "windows/services.h"
 #include "get_drives_worker.h"
-#include "get_files_worker.h"
 #include "get_icon_worker.h"
 #include "get_file_version_worker.h"
 #include "get_exif_date_worker.h"
@@ -58,8 +58,8 @@ Value startElevated(const CallbackInfo& info) {
 #endif
 
 Object Init(Env env, Object exports) {
-#if WINDOWS    
     exports.Set(String::New(env, "getFiles"), Function::New(env, GetFiles));
+#if WINDOWS    
     exports.Set(String::New(env, "getDrives"), Function::New(env, GetDrives));
     exports.Set(String::New(env, "getIcon"), Function::New(env, GetIcon));
     exports.Set(String::New(env, "getExifDate"), Function::New(env, GetExifDate));
