@@ -4,7 +4,10 @@ console.log("Test", test)
 
 const runLinux = async () => {
     //const path = "A:/Bilder/2017/Abu Dabbab"
-    const path = "/daten/Bilder/Tina/2018/07"
+    //const path = "/daten/Bilder/Tina/2018/07"
+    const path = "/home/uwe/Documents/07"
+
+    //const path = "/media/uwe/1084CB6884CB4F42/Windows/System32"
     //const path = "/home/uwe/test🙀"
     let exifFiles = await addon.getFiles(path)
 

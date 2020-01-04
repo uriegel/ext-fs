@@ -1,14 +1,13 @@
 #define NAPI_EXPERIMENTAL
 #include <napi.h>
-#include <filesystem>
+#include <sys/stat.h>
+#include <stdio.h>
+#include <dirent.h>
 #include <vector>
-#include "wstring.h"
-#include "nullfunction.h"
-#include "get_files_worker.h"
+#include "../nullfunction.h"
+#include "../get_files_worker.h"
 using namespace Napi;
 using namespace std;
-using namespace filesystem;
-
 
 struct File_item {
 	File_item(string&& display_name, bool is_directory,  bool is_hidden, uint64_t size, uint64_t time)		
@@ -26,9 +25,19 @@ struct File_item {
 
 vector<File_item> get_files(const string& directory) {
     vector<File_item> result;
-    for (auto entry : directory_iterator(directory)) {
-        result.emplace_back(entry.path().filename().string(), entry.is_directory(), false, entry.file_size(), 0);
+
+    auto dp = opendir(directory.c_str());
+    if (dp) {
+        while (auto ep = readdir(dp)) {            
+            if (ep->d_type == DT_REG || ep->d_type == DT_DIR) {
+                struct stat fa;
+                stat((directory + "/"s + ep->d_name).c_str(), &fa);
+                result.emplace_back(ep->d_name, ep->d_type == DT_DIR, ep->d_name[0] == '.', fa.st_size, fa.st_mtime * 1000);
+            }
+        }
+        closedir(dp);
     }
+
     return result;
 }
 
@@ -75,10 +84,9 @@ void Get_files_worker::OnOK() {
 }
 
 Value GetFiles(const CallbackInfo& info) {
-    auto directory = info[0].As<WString>().WValue();
-    auto directorys = (string)info[0].As<String>();
+    auto directory = (string)info[0].As<String>();
 
-    auto worker = new Get_files_worker(info.Env(), directorys);
+    auto worker = new Get_files_worker(info.Env(), directory);
     worker->Queue();
     return worker->Promise();
 }

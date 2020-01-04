@@ -5,7 +5,6 @@
 #include <optional>
 
 #include "../drive_item.h"
-#include "../file_item.h"
 #include "../version_info.h"
 
 class file_handle
@@ -23,7 +22,6 @@ private:
 
 uint64_t convert_windowstime_to_unixtime(const FILETIME& ft);
 std::vector<Drive_item> get_drives();
-std::vector<File_item> get_files(const std::wstring& directory);
 std::optional<Version_info> get_file_info_version(const std::wstring& file_name);
 std::wstring combine_path(std::wstring path, const std::wstring& path_to_combine);
 std::string format_message(int last_error); 

@@ -3,7 +3,6 @@
         "target_name": "extension-fs",
         "sources": [ 
             'addon.cpp',
-            'get_files_worker.cpp',
             'nullfunction.cpp'
         ],
         'include_dirs': [
@@ -53,6 +52,7 @@
                     'windows/shell.cpp',
                     'windows/get_conflicts.cpp',
                     'windows/services.cpp',
+                    'windows/get_files_worker.cpp',
                 ]                
             }],
             ['OS=="linux"', {
@@ -61,7 +61,9 @@
                     "gdiplus.lib",
                     "Mincore.lib"
                 ],
-                'sources': [ ]
+                'sources': [ 
+                    'linux/get_files_worker.cpp',
+                ]
             }],
         ]          
     }]

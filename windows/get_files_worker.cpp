@@ -1,16 +1,28 @@
 #define NAPI_EXPERIMENTAL
 #include <napi.h>
+#include <string>
 #include <vector>
 #include "wstring.h"
 #include "nullfunction.h"
 #include "get_files_worker.h"
-#include "file_item.h"
-#if WINDOWS
-#include "windows/utils.h"
-#elif LINUX
-#endif
 using namespace Napi;
 using namespace std;
+
+struct File_item {
+	File_item(const wstring& display_name, bool is_directory,  bool is_hidden, uint64_t size, uint64_t time)		
+	: display_name(display_name)
+	, is_directory(is_directory)
+	, is_hidden(is_hidden)
+	, size(size)
+	, time(time) {}
+	const wstring display_name;
+	const bool is_directory;
+	const bool is_hidden;
+	const uint64_t size;
+	const uint64_t time;
+};
+
+vector<File_item> get_files(const wstring& directory);
 
 class Get_files_worker : public AsyncWorker {
 public:

@@ -28,7 +28,9 @@
                 "${workspaceFolder}/node_modules/node-addon-api",
                 "${workspaceFolder}/node_modules/event-source-base"
             ],
-            "defines": [],
+            "defines": [
+                "LINUX"
+            ],
             "compilerPath": "/usr/bin/g++",
             "cStandard": "c11",
             "cppStandard": "c++17",
