@@ -3,7 +3,6 @@
 #include <vector>
 #include <fstream>
 #include <map>
-#include "std_utils.h"
 
 enum class Exif_tag {
 	// IFD0 items
@@ -135,14 +134,12 @@ enum class Exif_tag {
 class Exif_reader
 {
 public:
-	Exif_reader(const std::wstring& path)
-#if WINDOWS
-	: exif_stream(std::ifstream(path, std::ios_base::binary)) { }
-#else
-	: exif_stream(std::ifstream(ws2utf8(path), std::ios_base::binary)) { }
+#ifdef WINDOWS
+	Exif_reader(const std::wstring& file): exif_stream(std::ifstream(file, std::ios_base::binary)) { }
+#elif LINUX
+	Exif_reader(const std::string& file) : exif_stream(std::ifstream(file, std::ios_base::binary)) { }
 #endif
 	bool initialize();
-
 	std::tuple<bool, int> get_tag_int(Exif_tag tag);
 	std::tuple<bool, std::string> get_tag_string(Exif_tag tag) {
 		return get_tag_bytes(tag);
@@ -166,6 +163,12 @@ private:
 	bool is_little_endian{ false };
 };
 
-uint64_t get_exif_date(const std::wstring& file);
+#ifdef WINDOWS
+	uint64_t get_exif_date(const std::wstring& file);
+#elif LINUX
+	uint64_t get_exif_date(const std::string& file);
+#endif
+
+
 
 

@@ -5,7 +5,11 @@
 #include <algorithm>
 using namespace std;
 
-uint64_t get_exif_date(const wstring& file) {
+// #ifdef WINDOWS
+// 	uint64_t get_exif_date(const wstring& file) {
+// #elif LINUX
+	uint64_t get_exif_date(const string& file) {
+//#endif
     Exif_reader er(file);
 	auto res = er.initialize();
 	if (!res)
@@ -13,10 +17,12 @@ uint64_t get_exif_date(const wstring& file) {
 	bool success;
 	string result;
 	tie(success, result) = er.get_tag_string(Exif_tag::DateTimeOriginal);
-    if (!success) 
+    if (!success) {
         tie(success, result) = er.get_tag_string(Exif_tag::DateTime);
-    if (!success)
+	}
+    if (!success) {
         return 0;
+	}
 
 	tm tm = {};
 	stringstream ss(result.c_str());
@@ -48,7 +54,7 @@ bool Exif_reader::initialize()
 	if (!read_to_exif_start())
 		return false;
 
-	auto sizeOfExifData = read_ushort();
+	//auto sizeOfExifData = read_ushort();
 
 	auto exif = read_string(4);
 	if (exif != "Exif")
