@@ -44,8 +44,7 @@ static uint32_t swap32(uint32_t x) {
 	return (((x) & 0xff000000u) >> 24) | (((x) & 0x00ff0000u) >> 8) | (((x) & 0x0000ff00u) << 8) | (((x) & 0x000000ffu) << 24);
 }
 
-bool Exif_reader::initialize()
-{
+bool Exif_reader::initialize() {
 	if (!exif_stream)
 		return false;
 	if (read_ushort() != 0xFFD8)
@@ -54,7 +53,7 @@ bool Exif_reader::initialize()
 	if (!read_to_exif_start())
 		return false;
 
-	//auto sizeOfExifData = read_ushort();
+	read_ushort(); // auto sizeOfExifData = 
 
 	auto exif = read_string(4);
 	if (exif != "Exif")

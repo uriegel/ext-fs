@@ -17,6 +17,9 @@ const runLinux = async () => {
     }
     let end = process.hrtime.bigint()
     console.info(`Execution time : ${((end - start) / BigInt(100000000.0))} ms`)
+
+    const f1 = await addon.getExifDate("/home/uwe/Documents/07/20180701_203635.jpg")
+    console.log(f1)
 }
 
 runLinux() 

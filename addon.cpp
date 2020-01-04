@@ -2,12 +2,12 @@
 #include <napi.h>
 #include <filesystem>
 #include "get_files_worker.h"
+#include "get_exif_date_worker.h"
 #if WINDOWS
 #include "windows/services.h"
 #include "get_drives_worker.h"
 #include "get_icon_worker.h"
 #include "get_file_version_worker.h"
-#include "get_exif_date_worker.h"
 #include "get_conflicts_worker.h"
 #include "get_net_shares_worker.h"
 #include "create_directory_worker.h"
@@ -58,11 +58,12 @@ Value startElevated(const CallbackInfo& info) {
 #endif
 
 Object Init(Env env, Object exports) {
+    exports.Set(String::New(env, "getTest"), Function::New(env, GetTest));
     exports.Set(String::New(env, "getFiles"), Function::New(env, GetFiles));
+    exports.Set(String::New(env, "getExifDate"), Function::New(env, GetExifDate));
 #if WINDOWS    
     exports.Set(String::New(env, "getDrives"), Function::New(env, GetDrives));
     exports.Set(String::New(env, "getIcon"), Function::New(env, GetIcon));
-    exports.Set(String::New(env, "getExifDate"), Function::New(env, GetExifDate));
     exports.Set(String::New(env, "getConflicts"), Function::New(env, GetConflicts));
     exports.Set(String::New(env, "getFileVersion"), Function::New(env, GetFileVersion));
     exports.Set(String::New(env, "showInfo"), Function::New(env, ShowInfo));
@@ -82,7 +83,6 @@ Object Init(Env env, Object exports) {
     exports.Set(String::New(env, "startElevated"), Function::New(env, startElevated));
     exports.Set(String::New(env, "getNetShares"), Function::New(env, GetNetShares));
 #endif        
-    exports.Set(String::New(env, "getTest"), Function::New(env, GetTest));
     return exports;
 }
 
