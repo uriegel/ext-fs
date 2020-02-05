@@ -14,7 +14,7 @@ Open ```dev/index.js``` and type ```F5```
 
 Open Visual Studio and attach to process ```node.exe```
 
-## TODOs:
+## TODO:
 * Exceptions:
 ```
 ThrowException(Exception::TypeError(String::New("This is an error, oh yes."))) return Undefined(); 
@@ -22,6 +22,5 @@ ThrowException(Exception::TypeError(String::New("This is an error, oh yes."))) r
 1. Code (Directory Not found, No authorization, ...)
 2. Text
 3. Stacktrace
-* Linux
 * In README describe steps to access methods like ```getFiles```. 
 * Test: fileItem constructor, first item wstring data pointer -> results in Worker: is it the same pointer?

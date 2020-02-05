@@ -5,6 +5,7 @@
             'addon.cpp',
             'nullfunction.cpp',
             'exif_reader.cpp',
+            'get_lines_worker.cpp'
         ],
         'include_dirs': [
             "<!@(node -p \"require('node-addon-api').include\")",

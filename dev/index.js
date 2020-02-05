@@ -3,6 +3,8 @@ const test = addon.getTest()
 console.log("Test", test)
 
 const runLinux = async () => {
+    let lines = await addon.getLines("/home/uwe/server.log")
+
     //const path = "A:/Bilder/2017/Abu Dabbab"
     //const path = "/daten/Bilder/Tina/2018/07"
     const path = "/home/uwe/Documents/07"
