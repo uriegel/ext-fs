@@ -4,6 +4,7 @@
 #include "get_files_worker.h"
 #include "get_exif_date_worker.h"
 #include "get_lines_worker.h"
+#include "text_reader.h"
 #if WINDOWS
 #include "windows/services.h"
 #include "get_drives_worker.h"
@@ -63,6 +64,7 @@ Object Init(Env env, Object exports) {
     exports.Set(String::New(env, "getFiles"), Function::New(env, GetFiles));
     exports.Set(String::New(env, "getExifDate"), Function::New(env, GetExifDate));
     exports.Set(String::New(env, "getLines"), Function::New(env, GetLines));
+    Text_reader::Init(env, exports);
 #if WINDOWS    
     exports.Set(String::New(env, "getDrives"), Function::New(env, GetDrives));
     exports.Set(String::New(env, "getIcon"), Function::New(env, GetIcon));

@@ -3,7 +3,14 @@ const test = addon.getTest()
 console.log("Test", test)
 
 const runLinux = async () => {
-    let lines = await addon.getLines("/home/uwe/server.log")
+    //let lines = await addon.getLines("/home/uwe/server.log")
+
+    try  {
+        const reader = new addon.TextReader("D:\\Projekte\\LogReader\\LogReader\\server.log")
+        reader.getFileIndexes()
+    } catch (err) {
+        console.log("Exception", err)
+    }
 
     //const path = "A:/Bilder/2017/Abu Dabbab"
     //const path = "/daten/Bilder/Tina/2018/07"

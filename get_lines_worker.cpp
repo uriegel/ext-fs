@@ -2,6 +2,9 @@
 #include <napi.h>
 #include <vector>
 #include <string>
+#ifdef WINDOWS    
+#include "WString.h"
+#endif
 #include "nullfunction.h"
 #include "get_icon_worker.h"
 #include <iostream>
@@ -27,12 +30,12 @@ public:
             int recent_pos = 0;
             int size = 20000001;
             myfile.seekg(0, ios::end);
-            auto file_size = myfile.tellg();
+            auto file_size = static_cast<int>(myfile.tellg());
             myfile.seekg(0, ios::beg);
             auto buffer = new char[size];
             while (true) {
                 myfile.read(buffer, size - 1);
-                auto pos = myfile.tellg();
+                auto pos = static_cast<int>(myfile.tellg());
                 auto brk = pos == -1;
                 if (brk)
                     pos = file_size;
