@@ -1,6 +1,6 @@
 #include <thread>
+#include "Get_line_indexes_worker.h"
 #include "text_reader.h"
-//#include "AsyncContext.h"
 #include "wstring.h"
 using namespace std;
 using namespace Napi;
@@ -11,7 +11,7 @@ void Text_reader::Init(Napi::Env env, Object& exports) {
     Function func = DefineClass(
         env,
         "TextReader", {
-            InstanceMethod("getFileIndexes", &Text_reader::GetFileIndexes)
+            InstanceMethod("getLineIndexes", &Text_reader::GetLineIndexes)
         }
     );
 
@@ -48,26 +48,11 @@ Text_reader::~Text_reader() {
     file.close();
 }
 
-Napi::Value Text_reader::GetFileIndexes(const Napi::CallbackInfo& info) {
-    int recent_pos = 0;
-    int size = 20000001;
-    file.seekg(0, ios::end);
-    auto file_size = static_cast<int>(file.tellg());
-    file.seekg(0, ios::beg);
-    auto buffer = new char[size];
-    while (true) {
-        file.read(buffer, size - 1);
-        auto pos = static_cast<int>(file.tellg());
-        auto brk = pos == -1;
-        if (brk)
-            pos = file_size;
-        buffer[pos - recent_pos] = 0;
-        recent_pos = pos;
-        if (brk)
-            break;
-    }
+Napi::Value Text_reader::GetLineIndexes(const Napi::CallbackInfo& info) {
 
-    return Napi::Number::New(info.Env(), 23);
+    auto worker = new Get_line_indexes_worker(info.Env(), file);
+    worker->Queue();
+    return worker->Promise();
 }
 
 Napi::FunctionReference Text_reader::constructor;
