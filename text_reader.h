@@ -15,6 +15,7 @@ private:
     static Napi::FunctionReference constructor;
 
     Napi::Value GetLineIndexes(const Napi::CallbackInfo& info);
+    Napi::Value GetLines(const Napi::CallbackInfo& info);
    
 public:    
 #ifdef WINDOWS

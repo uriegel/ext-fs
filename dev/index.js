@@ -3,11 +3,16 @@ const test = addon.getTest()
 console.log("Test", test)
 
 const runLinux = async () => {
-    //let lines = await addon.getLines("/home/uwe/server1.log")
-
     try  {
-        const reader = new addon.TextReader("D:\\Projekte\\LogReader\\LogReader\\server.log")
-        var lines = await reader.getLineIndexes()
+        //const reader = new addon.TextReader("D:\\Projekte\\LogReader\\LogReader\\server.log")
+        const reader = new addon.TextReader("/home/uwe/server.log")
+        console.log("Hallo")
+        var lineIndexes = await reader.getLineIndexes()
+        //console.log(lineIndexes)
+        console.log(lineIndexes.length)
+        var lines = await reader.getLines(lineIndexes)
+        console.log("Hallo end")
+        //console.log(lines)
     } catch (err) {
         console.log("Exception", err)
     }

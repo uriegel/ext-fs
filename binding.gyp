@@ -6,6 +6,7 @@
             'nullfunction.cpp',
             'exif_reader.cpp',
             'get_line_indexes_worker.cpp',
+            'get_lines_worker.cpp',
             'text_reader.cpp'
         ],
         'include_dirs': [

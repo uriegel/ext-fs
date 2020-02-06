@@ -9,8 +9,6 @@ struct Line_index {
     Line_index(int start_pos, int length) : start_pos(start_pos), length(length) {}
 };
 
-
-
 class Get_line_indexes_worker : public Napi::AsyncWorker {
 public:
     Get_line_indexes_worker(const Napi::Env& env, std::ifstream& file);

@@ -1,5 +1,6 @@
 #include <thread>
-#include "Get_line_indexes_worker.h"
+#include "get_line_indexes_worker.h"
+#include "get_lines_worker.h"
 #include "text_reader.h"
 #include "wstring.h"
 using namespace std;
@@ -11,7 +12,8 @@ void Text_reader::Init(Napi::Env env, Object& exports) {
     Function func = DefineClass(
         env,
         "TextReader", {
-            InstanceMethod("getLineIndexes", &Text_reader::GetLineIndexes)
+            InstanceMethod("getLineIndexes", &Text_reader::GetLineIndexes),
+            InstanceMethod("getLines", &Text_reader::GetLines)
         }
     );
 
@@ -49,8 +51,21 @@ Text_reader::~Text_reader() {
 }
 
 Napi::Value Text_reader::GetLineIndexes(const Napi::CallbackInfo& info) {
-
     auto worker = new Get_line_indexes_worker(info.Env(), file);
+    worker->Queue();
+    return worker->Promise();
+}
+
+Napi::Value Text_reader::GetLines(const Napi::CallbackInfo& info) {
+    auto items_array = info[0].As<Array>();
+    vector<Line_index> line_indexes;
+    for (auto i = 0U; i < items_array.Length(); i++) {
+        auto obj = items_array.Get(i).As<Napi::Object>();
+        auto pos = obj.Get("index").As<Number>().Int32Value();
+        auto length = obj.Get("length").As<Number>().Int32Value();
+        line_indexes.emplace_back(pos, length);
+    }
+    auto worker = new Get_lines_worker(info.Env(), move(line_indexes), file);
     worker->Queue();
     return worker->Promise();
 }
