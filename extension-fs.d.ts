@@ -98,3 +98,8 @@ declare module 'extension-fs' {
     function getNetShares(server: string): Promise<NetShare[]>
     function getTest(): number
 }
+
+declare class TextReader {
+    getLineCount(): Promise<number>
+    getLines(lines: Number[]): Promise<string>
+}
