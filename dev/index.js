@@ -7,12 +7,10 @@ const runLinux = async () => {
         //const reader = new addon.TextReader("D:\\Projekte\\LogReader\\LogReader\\server.log")
         const reader = new addon.TextReader("/home/uwe/server.log")
         console.log("Hallo")
-        var lineIndexes = await reader.getLineIndexes()
-        //console.log(lineIndexes)
-        console.log(lineIndexes.length)
-        var lines = await reader.getLines(lineIndexes)
-        console.log("Hallo end")
-        //console.log(lines)
+        var lineIndexes = await reader.getLineCount()
+        console.log(lineIndexes)
+        var lines = await reader.getLines([1, 2, 3, 4, 5, 6, 7,8 ,9, 100, 10000])
+        console.log(lines)
     } catch (err) {
         console.log("Exception", err)
     }

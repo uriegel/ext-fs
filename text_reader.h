@@ -3,6 +3,7 @@
 #include <fstream>
 #include <napi.h>
 #include <string>
+#include "line_index.h"
 
 class Text_reader: public Napi::ObjectWrap<Text_reader> {
 public:
@@ -14,10 +15,13 @@ public:
 private:
     static Napi::FunctionReference constructor;
 
-    Napi::Value GetLineIndexes(const Napi::CallbackInfo& info);
-    Napi::Value GetLines(const Napi::CallbackInfo& info);
+    Napi::Value get_line_count(const Napi::CallbackInfo& info);
+    Napi::Value get_lines(const Napi::CallbackInfo& info);
    
-public:    
+    void get_line_indexes();
+
+    std::vector<Line_index> line_indexes;
+
 #ifdef WINDOWS
     std::wstring file_name;
 #elif LINUX
